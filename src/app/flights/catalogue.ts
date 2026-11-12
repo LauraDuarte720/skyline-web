@@ -1,4 +1,4 @@
-import { Airport } from './airport';
+import { AirportCode } from './airport';
 
 export type FlightScope = 'NATIONAL' | 'INTERNATIONAL';
 
@@ -7,8 +7,8 @@ export interface Flight {
     id: string;
     airlineId: string;
     price: number;
-    originAirport: Airport;          // enum name, e.g. "EL_DORADO"
-    destinationAirport: Airport;
+    originAirport: AirportCode;      // IATA code, e.g. "BOG"
+    destinationAirport: AirportCode;
     departureTime: string;           // LocalDateTime arrives as an ISO string
     arrivalTime: string;
     flightScope: FlightScope;
@@ -18,14 +18,14 @@ export interface Flight {
 
 // Backend: LayoverResponse
 export interface Layover {
-    airport: Airport;
+    airport: AirportCode;            // IATA code
     durationMinutes: number;
 }
 
 // Query params for GET /api/flights (backend: SearchFlightsRequest)
 export interface FlightSearchRequest {
-    origin: string;          // IATA code, e.g. "BOG" (AIRPORTS[x].code)
-    destination: string;
+    origin: AirportCode;     // IATA code, e.g. "BOG" (Airport.code)
+    destination: AirportCode;
     departureDay: string;    // "YYYY-MM-DD"
     passengers: number;
 }
