@@ -12,6 +12,28 @@ export interface SelectReturnFlightRequest {
     returnFlightId: string;
 }
 
+export interface LuggageDetailResponse {
+    quantity: number;
+    subTotal: number;
+}
+
+export interface PassengerResponse {
+    idDocument: string;
+    documentType: string;
+    firstName: string;
+    secondName: string;
+    lastName1: string;
+    lastName2: string;
+    birthDate: string; // LocalDate arrives as an ISO string
+    gender: string;
+    holder: boolean;
+    email: string;
+    phonePrefix: string;
+    phoneNumber: string;
+    luggageDetailRespoonse: LuggageDetailResponse;
+}
+
+
 // Returned by both endpoints (only the fields used so far; the backend sends more)
 export interface BookingResponse {
     id: string;                     // needed for the return-flight PUT
@@ -19,5 +41,8 @@ export interface BookingResponse {
     price: number;
     outboundFlightId: string;
     returnFlightId: string | null;  // null until the return flight is chosen
-    tripType: TripType;
+    tripType: string;
+    bookingStatus: string;
+    paymentDeadLine: string;          // LocalDateTime arrives as an ISO string
+    passengers: PassengerResponse[];
 }
