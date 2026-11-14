@@ -1,0 +1,32 @@
+<form [formGroup]="bookingForm" (ngSubmit)="onSubmit()">    
+  <div>
+    <label>Vuelo de ida:</label>
+    <input type="text" formControlName="outboundFlightId" placeholder="ID del vuelo de ida">
+        @if (bookingForm.get('outboundFlightId')?.invalid && bookingForm.get('outboundFlightId')?.touched) {
+      <div class="error">Please enter a valid outbound flight ID.</div>
+    }
+  </div>
+
+  <div>
+    <label>Número de pasajeros:</label>
+    <input type="number" formControlName="numPassengers" min="1">
+    @if (bookingForm.get('numPassengers')?.invalid && bookingForm.get('numPassengers')?.touched) {
+      <div class="error">Please enter a valid number of passengers.</div>
+    }
+  </div>
+
+  <div>
+    <label>Tipo de viaje:</label>
+    <select formControlName="tripType">
+      <option value="" disabled>Selecciona</option>
+    <option value="ONE_WAY">Ida</option>
+    <option value="ROUND_TRIP">Ida y vuelta</option>
+    </select>
+    @if (bookingForm.get('tripType')?.invalid && bookingForm.get('tripType')?.touched) {
+      <div class="error">Please enter a valid trip type.</div>
+    }
+  </div>
+
+  <button type="submit" [disabled]="bookingForm.invalid || isLoading()"> select
+    </button>
+    <div>{{ result() }}</div>
