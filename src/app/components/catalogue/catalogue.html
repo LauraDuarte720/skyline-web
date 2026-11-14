@@ -1,0 +1,36 @@
+<form [formGroup]="flightForm" (ngSubmit)="onSearch()">
+  <div>
+    <label>Origen:</label>
+    <input type="text" formControlName="origin" placeholder="BOG">
+  </div>
+
+  <div>
+    <label>Destino:</label>
+    <input type="text" formControlName="destination" placeholder="MDE">
+  </div>
+
+  <div>
+    <label>Fecha:</label>
+    <input type="date" formControlName="departureDay">
+  </div>
+
+  <div>
+    <label>Pasajeros:</label>
+    <input type="number" formControlName="passengers" min="1">
+  </div>
+
+  <button type="submit" [disabled]="flightForm.invalid">Buscar</button>
+</form>
+
+<ul>
+  @for (flight of flights(); track flight.id) {
+    <li>
+      {{ flight.id }}  
+      {{ flight.originAirport }} → {{ flight.destinationAirport }} |
+      {{ flight.departureTime }} |
+      ${{ flight.price }}
+    </li>
+  } @empty {
+    <li>Sin resultados</li>
+  }
+</ul>
