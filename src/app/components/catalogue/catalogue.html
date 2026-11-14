@@ -1,36 +1,83 @@
-<form [formGroup]="flightForm" (ngSubmit)="onSearch()">
-  <div>
-    <label>Origen:</label>
-    <input type="text" formControlName="origin" placeholder="BOG">
+<div class="container mt-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 id="tittle-catalogue" class="h3 mb-0">
+      <i class="fa-solid fa-plane-departure me-2"></i>Buscar vuelos
+    </h1>
   </div>
 
-  <div>
-    <label>Destino:</label>
-    <input type="text" formControlName="destination" placeholder="MDE">
-  </div>
+  <!-- Formulario de búsqueda -->
+  <form [formGroup]="flightForm" (ngSubmit)="onSearch()" class="row g-3 mb-4">
+    <div class="col-md-3">
+      <label class="form-label">Origen</label>
+      <input type="text" formControlName="origin" class="form-control" placeholder="BOG">
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Destino</label>
+      <input type="text" formControlName="destination" class="form-control" placeholder="MDE">
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Fecha de salida</label>
+      <input type="date" formControlName="departureDay" class="form-control">
+    </div>
+    <div class="col-md-2">
+      <label class="form-label">Pasajeros</label>
+      <input type="number" formControlName="passengers" class="form-control" min="1">
+    </div>
+    <div class="col-md-1 d-flex align-items-end">
+      <button type="submit" class="btn btn-primary w-100" [disabled]="flightForm.invalid">
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </button>
+    </div>
+  </form>
 
-  <div>
-    <label>Fecha:</label>
-    <input type="date" formControlName="departureDay">
-  </div>
-
-  <div>
-    <label>Pasajeros:</label>
-    <input type="number" formControlName="passengers" min="1">
-  </div>
-
-  <button type="submit" [disabled]="flightForm.invalid">Buscar</button>
-</form>
-
-<ul>
-  @for (flight of flights(); track flight.id) {
-    <li>
-      {{ flight.id }}  
-      {{ flight.originAirport }} → {{ flight.destinationAirport }} |
-      {{ flight.departureTime }} |
-      ${{ flight.price }}
-    </li>
-  } @empty {
-    <li>Sin resultados</li>
+  @if (flights().length === 0) {
+    <!-- Cuando no hay vuelos -->
+    <div class="text-center py-5 text-muted">
+      <i class="fa-solid fa-plane-slash fa-3x mb-3"></i>
+      <p class="h5">No hay vuelos para mostrar.</p>
+    </div>
+  } @else {
+    <!-- Una tarjeta por vuelo -->
+    <div class="row g-3">
+      @for (flight of flights(); track flight.id) {
+        <div class="col-md-6 col-lg-4">
+          <div class="card h-100 flight-card"
+               [class.international-flight]="flight.flightScope === 'INTERNATIONAL'">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <span class="fw-semibold">
+                {{ flight.originAirport }} → {{ flight.destinationAirport }}
+              </span>
+              <span class="badge {{ badgeFlightScope(flight.flightScope) }}">
+                {{ flight.flightScope }}
+              </span>
+            </div>
+            <div class="card-body">
+              <p class="mb-2">
+                <i class="fa-regular fa-clock me-1"></i>
+                {{ flight.departureTime | date:'short' }} – {{ flight.arrivalTime | date:'short' }}
+              </p>
+              <p class="mb-2">
+                <i class="fa-solid fa-tag me-1"></i>
+                {{ flight.price | number:'1.0-0' }}
+              </p>
+              <p class="text-muted small mb-0">
+                @if (flight.layovers.length === 0) {
+                  <i class="fa-solid fa-circle-check text-success me-1"></i>Vuelo directo
+                } @else {
+                  <i class="fa-solid fa-route text-warning me-1"></i>{{ flight.layovers.length }} escala(s)
+                }
+              </p>
+            </div>
+            <div class="card-footer text-end">
+              <a routerLink="/book" class="btn btn-sm btn-primary">
+                <i class="fa-solid fa-ticket me-1"></i>Reservar
+              </a>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
   }
-</ul>
+
+</div>

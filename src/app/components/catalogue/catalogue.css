@@ -2,3 +2,28 @@
     color: red;
     font-size: 0.85rem;
 }
+
+#tittle-catalogue{
+    color: burlywood;
+    text-transform: uppercase;
+    letter-spacing: 0.5rem;
+    
+}
+
+.flight-card{
+    transition:box-shadow 0.2s ease;
+}
+    
+.flight-card.international-flight{
+    border-left: 4px solid #080e4d;
+    padding-left: 0.5rem;
+}
+
+input[type="text"], input[type="date"] {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 1rem;
+}
