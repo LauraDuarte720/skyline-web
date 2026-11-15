@@ -1,0 +1,21 @@
+<div class = "position-fixed top-0 end-0 p-3" style="z-index: 1080">
+  @for (announcement of service.announcements(); track announcement.id) {
+    <div class="alert shadow-sm fade show mb-2"
+         [class.alert-success]="announcement.type === 'success'"
+         [class.alert-danger]="announcement.type === 'error'"
+         [class.alert-info]="announcement.type === 'info'"
+         role="alert"
+         style="cursor: pointer"
+         (click)="service.remove(announcement.id)"
+         {{announcement.text}}>
+      <div class="d-flex">
+        <div class="toast-body">
+          {{ announcement.text }}
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto"
+                data-bs-dismiss="toast" aria-label="Close"
+                (click)="service.remove(announcement.id)">
+        </button>
+      </div>
+    </div>
+  }
