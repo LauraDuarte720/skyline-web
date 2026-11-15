@@ -58,6 +58,9 @@
                 {{ flight.departureTime | date:'short' }} – {{ flight.arrivalTime | date:'short' }}
               </p>
               <p class="mb-2">
+                {{ flight.id }}
+              </p>
+              <p class="mb-2">
                 <i class="fa-solid fa-tag me-1"></i>
                 {{ flight.price | number:'1.0-0' }}
               </p>
