@@ -6,16 +6,5 @@
          [class.alert-info]="announcement.type === 'info'"
          role="alert"
          style="cursor: pointer"
-         (click)="service.remove(announcement.id)"
-         {{announcement.text}}>
-      <div class="d-flex">
-        <div class="toast-body">
-          {{ announcement.text }}
-        </div>
-        <button type="button" class="btn-close btn-close-white me-2 m-auto"
-                data-bs-dismiss="toast" aria-label="Close"
-                (click)="service.remove(announcement.id)">
-        </button>
-      </div>
-    </div>
+         (click)="service.remove(announcement.id)">{{announcement.text}}</div>
   }
