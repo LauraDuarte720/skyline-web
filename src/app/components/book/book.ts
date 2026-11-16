@@ -29,6 +29,7 @@ export class Book {
 
   onSubmit(): void {
     if (this.bookingForm.invalid)return;
+    this.result.set('');  
      const booking = this.bookingForm.value as SelectOutboundFlightRequest;
 
      this.isLoading.set(true);
