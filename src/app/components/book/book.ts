@@ -4,6 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BookingService } from '../../services/booking';
 import { SelectOutboundFlightRequest, SelectReturnFlightRequest, BookingResponse} from '../../flights/booking';
 import { TripType } from '../../flights/booking';
+import { NotificationsService } from '../../services/notifications';
 
 @Component({
   imports: [ReactiveFormsModule],
@@ -14,6 +15,7 @@ import { TripType } from '../../flights/booking';
 export class Book {
 
   private bookingService = inject(BookingService);
+  private announcement = inject(NotificationsService)
   private destroyRef = inject(DestroyRef);
 
   result = signal('');
@@ -27,24 +29,27 @@ export class Book {
 
   onSubmit(): void {
     if (this.bookingForm.invalid)return;
+    this.result.set('');  
      const booking = this.bookingForm.value as SelectOutboundFlightRequest;
 
      this.isLoading.set(true);
 
      this.bookingService.create(booking).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (response) => {
-            this.result.set(`Outbound flight selectetd correctly: ${response.id}, ${response.bookingStatus}` );
+            const message = `Outbound flight selectetd correctly: ${response.id}, ${response.bookingStatus} `
+            this.result.set(message);
+            this.announcement.success(message)
             this.bookingForm.reset();
             this.isLoading.set(false);
         },
         error: (error) => {
             if (error.status === 404) {
-                this.result.set('Outbound flight not found: ');
+                this.announcement.error('Outbound flight not found: ');
             } else if (error.status === 400) {
-                this.result.set('Error creating booking:');
+                this.announcement.error('Error creating booking:');
 
             }else {
-                this.result.set('Try again');
+                this.announcement.error('Try again');
             }
             this.isLoading.set(false);
         }
