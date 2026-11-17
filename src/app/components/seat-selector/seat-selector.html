@@ -1,0 +1,50 @@
+<form [formGroup]="bookingId">
+  <div>
+    <label>Reserva:</label>
+    <input type="text" formControlName="bookingId" placeholder="ID de la reserva">
+  </div>
+</form>
+
+<form [formGroup]="legForm" (ngSubmit)="onSearchSeats()">
+  <div>
+    <label>Tramo:</label>
+    <input type="text" formControlName="legId" placeholder="ID del tramo">
+    <button type="submit" [disabled]="legForm.invalid">Ver asientos</button>
+  </div>
+</form>
+
+@if (seats().length > 0) {
+  <div>
+    @for (seat of seats(); track seat.id) {
+      <button
+        type="button"
+        [disabled]="seat.status === 'OCCUPIED'"
+        [class.selected]="seatForm.value.legSeatId === seat.id"
+        (click)="seatForm.patchValue({ legSeatId: seat.id, legId: legForm.value.legId })">
+        {{ seat.seatCode }}
+      </button>
+    }
+  </div>
+}
+
+<form [formGroup]="seatForm" (ngSubmit)="onSubmit()">
+  <div>
+    <label>Pasajero:</label>
+    <input type="text" formControlName="passengerId" placeholder="Documento del pasajero">
+    @if (seatForm.get('passengerId')?.invalid && seatForm.get('passengerId')?.touched) {
+      <div class="error">Please enter a valid passenger ID.</div>
+    }
+  </div>
+
+  <div>
+    Asiento elegido:
+    @for (seat of seats(); track seat.id) {
+      @if (seat.id === seatForm.value.legSeatId) {
+        {{ seat.seatCode }}
+      }
+    }
+  </div>
+
+  <button type="submit" [disabled]="seatForm.invalid || bookingId.invalid || isLoading()">Seleccionar asiento</button>
+  <div>{{ result() }}</div>
+</form>
