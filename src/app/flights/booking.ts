@@ -46,3 +46,20 @@ export interface BookingResponse {
     paymentDeadLine: string;          // LocalDateTime arrives as an ISO string
     passengers: PassengerResponse[];
 }
+
+export interface SelectSeatRequest{
+    legId: string;
+    legSeatId: string;
+    passengerId: string;
+}
+
+export interface LegSeatMapResponse{
+    legId: string;
+    seats: LegSeatResponse[];
+}
+
+export interface LegSeatResponse{
+    id: string;
+    seatCode: string;
+    status: string;
+}
