@@ -1,29 +1,76 @@
 <div class="container mt-4">
 
+  <!-- Title -->
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 id="tittle-catalogue" class="h3 mb-0">
       <i class="fa-solid fa-plane-departure me-2"></i>Buscar vuelos
     </h1>
   </div>
 
-  <!-- Formulario de búsqueda -->
+  <!-- Search form -->
   <form [formGroup]="flightForm" (ngSubmit)="onSearch()" class="row g-3 mb-4">
+
+    <!-- Trip type -->
+    <div class="col-12">
+      <div class="btn-group" role="group">
+        <input type="radio" class="btn-check" id="oneWay" value="ONE_WAY" formControlName="tripType">
+        <label class="btn btn-outline-primary" for="oneWay">Solo ida</label>
+
+        <input type="radio" class="btn-check" id="roundTrip" value="ROUND_TRIP" formControlName="tripType">
+        <label class="btn btn-outline-primary" for="roundTrip">Ida y vuelta</label>
+      </div>
+    </div>
+
+    <!-- Origin -->
     <div class="col-md-3">
       <label class="form-label">Origen</label>
-      <input type="text" formControlName="origin" class="form-control" placeholder="BOG">
+      <select formControlName="origin" class="form-select">
+        <option value="" disabled>Elige el origen</option>
+        @for (airport of airports(); track airport.code) {
+          <option [value]="airport.code">{{ airport.city }} ({{ airport.code }})</option>
+        }
+      </select>
     </div>
-    <div class="col-md-3">
+
+    <!-- Destination -->
+    <div class="col-md-2">
       <label class="form-label">Destino</label>
-      <input type="text" formControlName="destination" class="form-control" placeholder="MDE">
+      <select formControlName="destination" class="form-select">
+        <option value="" disabled>Elige el destino</option>
+        @for (airport of airports(); track airport.code) {
+          <option [value]="airport.code">{{ airport.city }} ({{ airport.code }})</option>
+        }
+      </select>
+      @if (flightForm.hasError('sameAirport')) {
+        <div class="error">El destino debe ser distinto del origen.</div>
+      }
     </div>
-    <div class="col-md-3">
+
+    <!-- Departure date -->
+    <div class="col-md-2">
       <label class="form-label">Fecha de salida</label>
       <input type="date" formControlName="departureDay" class="form-control">
     </div>
+
+    <!-- Return date (round trip only) -->
+    @if (roundTripSelected()) {
+      <div class="col-md-2">
+        <label class="form-label">Fecha de regreso</label>
+        <input type="date" formControlName="returnDay" class="form-control"
+               [min]="flightForm.controls.departureDay.value">
+      </div>
+    }
+
+    <!-- Passengers -->
     <div class="col-md-2">
       <label class="form-label">Pasajeros</label>
       <input type="number" formControlName="passengers" class="form-control" min="1">
+      @if (flightForm.controls.passengers.invalid && flightForm.controls.passengers.touched) {
+        <div class="error">Debe haber al menos 1 pasajero.</div>
+      }
     </div>
+
+    <!-- Search button -->
     <div class="col-md-1 d-flex align-items-end">
       <button type="submit" class="btn btn-primary w-100" [disabled]="flightForm.invalid">
         <i class="fa-solid fa-magnifying-glass"></i>
@@ -31,55 +78,71 @@
     </div>
   </form>
 
-  @if (flights().length === 0) {
-    <!-- Cuando no hay vuelos -->
+  @if (!searched()) {
+    <!-- Before the first search -->
     <div class="text-center py-5 text-muted">
-      <i class="fa-solid fa-plane-slash fa-3x mb-3"></i>
-      <p class="h5">No hay vuelos para mostrar.</p>
+      <i class="fa-solid fa-plane fa-3x mb-3"></i>
+      <p class="h5">Busca un vuelo para empezar.</p>
     </div>
   } @else {
-    <!-- Una tarjeta por vuelo -->
-    <div class="row g-3">
-      @for (flight of flights(); track flight.id) {
-        <div class="col-md-6 col-lg-4">
-          <div class="card h-100 flight-card"
-               [class.international-flight]="flight.flightScope === 'INTERNATIONAL'">
-            <div class="card-header d-flex justify-content-between align-items-center">
-              <span class="fw-semibold">
-                {{ flight.originAirport }} → {{ flight.destinationAirport }}
-              </span>
-              <span class="badge {{ badgeFlightScope(flight.flightScope) }}">
-                {{ flight.flightScope }}
-              </span>
-            </div>
-            <div class="card-body">
-              <p class="mb-2">
-                <i class="fa-regular fa-clock me-1"></i>
-                {{ flight.departureTime | date:'short' }} – {{ flight.arrivalTime | date:'short' }}
-              </p>
-              <p class="mb-2">
-                {{ flight.id }}
-              </p>
-              <p class="mb-2">
-                <i class="fa-solid fa-tag me-1"></i>
-                {{ flight.price | number:'1.0-0' }}
-              </p>
-              <p class="text-muted small mb-0">
-                @if (flight.layovers.length === 0) {
-                  <i class="fa-solid fa-circle-check text-success me-1"></i>Vuelo directo
-                } @else {
-                  <i class="fa-solid fa-route text-warning me-1"></i>{{ flight.layovers.length }} escala(s)
-                }
-              </p>
-            </div>
-            <div class="card-footer text-end">
-              <a routerLink="/book" class="btn btn-sm btn-primary">
-                <i class="fa-solid fa-ticket me-1"></i>Reservar
-              </a>
-            </div>
+
+    <!-- Outbound flights -->
+    <h2 class="h5 mb-3">
+      <i class="fa-solid fa-plane-departure me-2"></i>Vuelos de ida
+    </h2>
+    @if (outboundFlights().length === 0) {
+      <div class="text-center py-4 text-muted">
+        <i class="fa-solid fa-plane-slash fa-2x mb-2"></i>
+        <p>No hay vuelos de ida para mostrar.</p>
+      </div>
+    } @else {
+      <div class="row g-3 mb-4">
+        @for (flight of outboundFlights(); track flight.id) {
+          <div class="col-md-6 col-lg-4">
+            <app-flight-card
+              [flight]="flight"
+              [selected]="flight.id === bookingFlow.outboundFlight()?.id"
+              actionLabel="Elegir ida"
+              (choose)="bookingFlow.selectOutbound($event)" />
           </div>
+        }
+      </div>
+    }
+
+    <!-- Return flights (round trip only) -->
+    @if (bookingFlow.isRoundTrip()) {
+      <h2 class="h5 mb-3">
+        <i class="fa-solid fa-plane-arrival me-2"></i>Vuelos de regreso
+      </h2>
+      @if (!bookingFlow.outboundFlight()) {
+        <p class="text-muted">Primero elige tu vuelo de ida.</p>
+      } @else if (compatibleReturnFlights().length === 0) {
+        <div class="text-center py-4 text-muted">
+          <i class="fa-solid fa-plane-slash fa-2x mb-2"></i>
+          <p>No hay vuelos de regreso compatibles con el vuelo de ida elegido.</p>
+        </div>
+      } @else {
+        <div class="row g-3 mb-4">
+          @for (flight of compatibleReturnFlights(); track flight.id) {
+            <div class="col-md-6 col-lg-4">
+              <app-flight-card
+                [flight]="flight"
+                [selected]="flight.id === bookingFlow.returnFlight()?.id"
+                actionLabel="Elegir regreso"
+                (choose)="bookingFlow.selectReturn($event)" />
+            </div>
+          }
         </div>
       }
+    }
+
+    <!-- Continue -->
+    <div class="text-end mt-3 mb-5">
+      <button type="button" class="btn btn-success"
+              [disabled]="!bookingFlow.flightsChosen()"
+              (click)="onContinue()">
+        Continuar con la reserva<i class="fa-solid fa-arrow-right ms-2"></i>
+      </button>
     </div>
   }
 
