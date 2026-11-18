@@ -1,8 +1,8 @@
-import { Injectable, inject, signal } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { SelectOutboundFlightRequest, SelectReturnFlightRequest, BookingResponse, SelectSeatRequest, LegSeatMapResponse} from "../flights/booking";
+import { SelectOutboundFlightRequest, SelectReturnFlightRequest, BookingResponse, SelectSeatRequest, LegSeatMapResponse } from "../flights/booking";
 
-@Injectable({providedIn: "root"}) 
+@Injectable({providedIn: "root"})
 export class BookingService {
     private http = inject(HttpClient);
     private url = "http://localhost:8080/api/bookings";
@@ -14,7 +14,7 @@ export class BookingService {
 
     selectReturnFlight(bookingId: string, request: SelectReturnFlightRequest) {
         return this.http.put<BookingResponse>(`${this.url}/${bookingId}/return-flight`, request);
-    }   
+    }
 
     selectLegSeat(bookingId: string, request: SelectSeatRequest) {
         return this.http.put<BookingResponse>(`${this.url}/${bookingId}/seats`, request);
@@ -22,5 +22,9 @@ export class BookingService {
 
     getLegSeatMap(legId: string) {
         return this.http.get<LegSeatMapResponse>(`${this.urlSeats}/${legId}/seats`);
+    }
+
+    cancel(bookingId: string) {
+        return this.http.put<BookingResponse>(`${this.url}/${bookingId}/cancel`, {});
     }
 }

@@ -1,4 +1,6 @@
 import { AirportCode } from './airport';
+import { TripType } from './booking';
+
 
 export type FlightScope = 'NATIONAL' | 'INTERNATIONAL';
 
@@ -27,5 +29,14 @@ export interface FlightSearchRequest {
     origin: AirportCode;     // IATA code, e.g. "BOG" (Airport.code)
     destination: AirportCode;
     departureDay: string;    // "YYYY-MM-DD"
+    passengers: number;
+}
+
+export interface TripSearch {
+    tripType: TripType;
+    origin: AirportCode;
+    destination: AirportCode;
+    departureDay: string;    // "YYYY-MM-DD"
+    returnDay: string | null;       // "YYYY-MM-DD"
     passengers: number;
 }
