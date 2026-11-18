@@ -1,21 +1,25 @@
 import { inject } from '@angular/core';
 import { CanDeactivateFn } from '@angular/router';
 import { catchError, map, of } from 'rxjs';
-import { Passengers } from '../components/passengers/passengers';
 import { BookingFlowService } from '../services/booking-flow';
 import { BookingService } from '../services/booking';
 import { NotificationsService } from '../services/notifications';
 
-// Leaving the passengers page without finishing: ask, and if the user agrees, cancel the booking
-export const leaveBookingGuard: CanDeactivateFn<Passengers> = (component) => {
+// A page of the booking flow (passengers, luggage...): it says if its step is done
+export interface BookingStep {
+  stepCompleted: () => boolean;
+}
+
+// Leaving a booking page without finishing: ask, and if the user agrees, cancel the booking
+export const leaveBookingGuard: CanDeactivateFn<BookingStep> = (component) => {
   const bookingFlow = inject(BookingFlowService);
   const bookingService = inject(BookingService);
   const announcement = inject(NotificationsService);
 
   const bookingId = bookingFlow.bookingId();
 
-  // Passengers saved (normal next step) or there is no booking: let the user go
-  if (component.passengersSaved() || !bookingId) {
+  // Step done (normal next step) or there is no booking: let the user go
+  if (component.stepCompleted() || !bookingId) {
     return true;
   }
 

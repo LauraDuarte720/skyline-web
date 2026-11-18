@@ -247,7 +247,9 @@ export class SeatSelector {
       },
     });
   }
-
+  onContinue(): void {
+    this.router.navigate(['/luggage']);   // next step of the booking
+  }
   // Auto-advance: select the next passenger (after this one) with no seat on this leg
   private advanceFrom(passenger: PassengerDetailResponse, legId: string): void {
     const passengers = this.passengers();
