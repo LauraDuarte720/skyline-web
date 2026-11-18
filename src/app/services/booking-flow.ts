@@ -58,6 +58,10 @@ export class BookingFlowService {
         sessionStorage.setItem(STORAGE_KEY, JSON.stringify(flow));
     }
 
+    setBookingId(bookingId: string): void {
+    this.update({ bookingId });
+}
+
     private load(): BookingFlow {
         try {
             const saved = sessionStorage.getItem(STORAGE_KEY);
