@@ -1,0 +1,114 @@
+/* Sizes shared by the cabin and the legend */
+:host {
+    --seat-size: 2.4rem;
+    --seat-gap: 0.4rem;
+}
+
+/* The airplane body: rounded nose on top, straight sides */
+.cabin {
+    width: fit-content;
+    margin: 0 auto;
+    padding: 0 1.25rem 1.5rem;
+    background: #f8f9fb;
+    border: 2px solid #d6dbe3;
+    border-radius: 50% 50% 1.5rem 1.5rem / 9rem 9rem 1.5rem 1.5rem;
+}
+
+/* While a seat is being saved: faded and not clickable */
+.cabin.saving {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.cabin-nose {
+    text-align: center;
+    padding: 2.5rem 0 1rem;
+    font-size: 1.75rem;
+    color: #9aa3b2;
+}
+
+/* One line of the cabin: seats, aisle, seats */
+.cabin-row {
+    display: flex;
+    align-items: center;
+    gap: var(--seat-gap);
+    margin-bottom: var(--seat-gap);
+}
+
+.cabin-header {
+    color: #6c757d;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.seat-slot,
+.seat {
+    width: var(--seat-size);
+    height: var(--seat-size);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.aisle {
+    width: 2rem;
+    text-align: center;
+    font-size: 0.75rem;
+    color: #9aa3b2;
+}
+
+/* A seat: rounded more at the bottom, like a seat back */
+.seat {
+    padding: 0;
+    border: 2px solid #b6c2d4;
+    border-radius: 0.5rem 0.5rem 0.8rem 0.8rem;
+    background: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.seat-free:hover {
+    transform: translateY(-2px);
+    border-color: #0d6efd;
+    background: #e7f1ff;
+    cursor: pointer;
+}
+
+.seat-taken {
+    background: #dee2e6;
+    border-color: #dee2e6;
+    color: #adb5bd;
+    cursor: not-allowed;
+}
+
+.seat-taken::after {
+    content: '✕';
+}
+
+.seat-mine {
+    background: #cfe2ff;
+    border-color: #9ec5fe;
+    color: #084298;
+    cursor: pointer;
+}
+
+.seat-active {
+    background: #0d6efd;
+    border-color: #0a58ca;
+    color: #fff;
+}
+
+/* Legend: small seats next to their meaning */
+.legend li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.legend .seat {
+    width: 1.6rem;
+    height: 1.6rem;
+    font-size: 0.6rem;
+}
