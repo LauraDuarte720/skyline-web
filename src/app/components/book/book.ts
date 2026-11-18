@@ -71,7 +71,7 @@ export class Book {
 
   private finish(): void {
     this.isLoading.set(false);
-    this.announcement.success('¡Reserva creada! Tienes 20 minutos para completarla.');
+    this.announcement.success('¡Vuelos seleccionados con éxito! Tienes 20 minutos para completar tu reserva.');
   }
 
   private handleError(error: HttpErrorResponse): void {
