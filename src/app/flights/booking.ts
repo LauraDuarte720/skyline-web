@@ -78,7 +78,7 @@ export interface BookingResponse {
 
 export interface SelectSeatRequest{
     legId: string;
-    legSeatId: string;
+    legSeatId: string | null;   // null releases the passenger's seat on that leg
     passengerId: string;
 }
 

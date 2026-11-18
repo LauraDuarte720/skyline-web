@@ -176,7 +176,10 @@ export class SeatSelector {
 
   seatTitle(seat: LegSeatResponse): string {
     const owner = this.seatOwners().get(seat.id);
-    if (owner) return `${seat.seatCode} · ${owner.firstName}`;
+    if (owner) {
+      const isActive = owner.idDocument === this.activePassenger()?.idDocument;
+      return `${seat.seatCode} · ${owner.firstName}${isActive ? ' · toca para liberarlo' : ''}`;
+    }
     return seat.status === 'AVAILABLE' ? `${seat.seatCode} · libre` : `${seat.seatCode} · ocupado`;
   }
 
@@ -202,7 +205,7 @@ export class SeatSelector {
     this.activePassengerId.set(passenger.idDocument);
   }
 
-  // ---------- Assigning a seat ----------
+  // ---------- Assigning or releasing a seat ----------
   onSeatClick(seat: LegSeatResponse): void {
     const passenger = this.activePassenger();
     const leg = this.activeLeg();
@@ -215,27 +218,30 @@ export class SeatSelector {
       this.selectPassenger(this.seatOwners().get(seat.id)!);
       return;
     }
-    if (state !== 'free') return;   // taken, or already this passenger's seat
+    if (state === 'taken') return;
 
+    // Clicking the selected passenger's own seat again releases it (legSeatId null)
+    const releasing = state === 'active';
     const request: SelectSeatRequest = {
       legId: leg.legId,
-      legSeatId: seat.id,
+      legSeatId: releasing ? null : seat.id,
       passengerId: passenger.idDocument,
     };
+    const action = releasing ? 'liberar' : 'asignar';
 
     this.saving.set(true);
     this.bookingService.selectLegSeat(bookingId, request).subscribe({
       next: () => {
         this.saving.set(false);
-        this.advanceFrom(passenger, leg.legId);
+        if (!releasing) this.advanceFrom(passenger, leg.legId);   // after releasing, stay on this passenger
         this.reload.update((n) => n + 1);
       },
       error: (error: HttpErrorResponse) => {
         this.saving.set(false);
         if (error.status === 422) {
-          this.announcement.error(`No se pudo asignar el asiento: ${error.error?.message ?? ''}`);
+          this.announcement.error(`No se pudo ${action} el asiento: ${error.error?.message ?? ''}`);
         } else {
-          this.announcement.error('No se pudo asignar el asiento, intenta de nuevo');
+          this.announcement.error(`No se pudo ${action} el asiento, intenta de nuevo`);
         }
         this.reload.update((n) => n + 1);   // show the real state (someone may have taken it)
       },
