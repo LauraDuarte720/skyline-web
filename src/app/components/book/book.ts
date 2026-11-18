@@ -72,6 +72,7 @@ export class Book {
   private finish(): void {
     this.isLoading.set(false);
     this.announcement.success('¡Vuelos seleccionados con éxito! Tienes 20 minutos para completar tu reserva.');
+    this.router.navigate(['/passengers']);
   }
 
   private handleError(error: HttpErrorResponse): void {
