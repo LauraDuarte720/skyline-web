@@ -1,4 +1,34 @@
 export type TripType = 'ONE_WAY' | 'ROUND_TRIP';
+export type DocumentType = 'CITIZENSHIP_ID'| 'FOREIGNER_ID'| 'PASSPORT'|
+    'IDENTITY_CARD'|'CIVIL_REGISTRATION';
+export type Gender = 'FEMALE'|'MALE'|'OTHER';
+
+export type PhonePrefix = 'COLOMBIA' | 'UNITED_STATES' | 'CANADA' | 'MEXICO' | 'ARGENTINA'
+    | 'BRAZIL' | 'CHILE' | 'PERU' | 'ECUADOR' | 'VENEZUELA' | 'SPAIN' | 'UNITED_KINGDOM'
+    | 'FRANCE' | 'GERMANY' | 'ITALY' | 'PORTUGAL' | 'CHINA' | 'JAPAN' | 'SOUTH_KOREA' | 'AUSTRALIA';
+
+export const PHONE_PREFIXES: { value: PhonePrefix; label: string }[] = [
+    { value: 'COLOMBIA', label: 'Colombia (+57)' },
+    { value: 'UNITED_STATES', label: 'Estados Unidos (+1)' },
+    { value: 'CANADA', label: 'Canadá (+1)' },
+    { value: 'MEXICO', label: 'México (+52)' },
+    { value: 'ARGENTINA', label: 'Argentina (+54)' },
+    { value: 'BRAZIL', label: 'Brasil (+55)' },
+    { value: 'CHILE', label: 'Chile (+56)' },
+    { value: 'PERU', label: 'Perú (+51)' },
+    { value: 'ECUADOR', label: 'Ecuador (+593)' },
+    { value: 'VENEZUELA', label: 'Venezuela (+58)' },
+    { value: 'SPAIN', label: 'España (+34)' },
+    { value: 'UNITED_KINGDOM', label: 'Reino Unido (+44)' },
+    { value: 'FRANCE', label: 'Francia (+33)' },
+    { value: 'GERMANY', label: 'Alemania (+49)' },
+    { value: 'ITALY', label: 'Italia (+39)' },
+    { value: 'PORTUGAL', label: 'Portugal (+351)' },
+    { value: 'CHINA', label: 'China (+86)' },
+    { value: 'JAPAN', label: 'Japón (+81)' },
+    { value: 'SOUTH_KOREA', label: 'Corea del Sur (+82)' },
+    { value: 'AUSTRALIA', label: 'Australia (+61)' },
+];
 
 // POST /api/bookings: creates the booking with the outbound flight
 export interface SelectOutboundFlightRequest {
@@ -30,7 +60,7 @@ export interface PassengerResponse {
     email: string;
     phonePrefix: string;
     phoneNumber: string;
-    luggageDetailRespoonse: LuggageDetailResponse;
+    luggage: LuggageDetailResponse;
 }
 
 
@@ -43,7 +73,7 @@ export interface BookingResponse {
     returnFlightId: string | null;  // null until the return flight is chosen
     tripType: string;
     bookingStatus: string;
-    paymentDeadLine: string;          // LocalDateTime arrives as an ISO string
+    paymentDeadline: string;          // LocalDateTime arrives as an ISO string
     passengers: PassengerResponse[];
 }
 
@@ -62,4 +92,23 @@ export interface LegSeatResponse{
     id: string;
     seatCode: string;
     status: string;
+}
+
+export interface AddPassengersRequest{
+    passengers : PassengerRequest[]
+    holderIdDocument: string;
+    email: string;
+    phoneNumber: string;
+    phonePrefix: PhonePrefix;
+}
+
+export interface PassengerRequest{
+    idDocument: string;
+    documentType: DocumentType;
+    firstName: string;
+    secondName: string |null;
+    lastName1: string;
+    lastName2: string | null;
+    birthDate: string;
+    gender: Gender
 }

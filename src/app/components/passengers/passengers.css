@@ -1,0 +1,14 @@
+#title-passengers {
+    color: burlywood;
+    text-transform: uppercase;
+    letter-spacing: 0.5rem;
+}
+
+.passenger-card {
+    transition: box-shadow 0.2s ease;
+}
+
+/* The passenger marked as holder gets a colored left border */
+.passenger-card.holder-card {
+    border-left: 4px solid #080e4d;
+}
