@@ -1,50 +1,109 @@
-<form [formGroup]="bookingId">
-  <div>
-    <label>Reserva:</label>
-    <input type="text" formControlName="bookingId" placeholder="ID de la reserva">
-  </div>
-</form>
+<div class="container mt-4 mb-5">
 
-<form [formGroup]="legForm" (ngSubmit)="onSearchSeats()">
-  <div>
-    <label>Tramo:</label>
-    <input type="text" formControlName="legId" placeholder="ID del tramo">
-    <button type="submit" [disabled]="legForm.invalid">Ver asientos</button>
-  </div>
-</form>
+  <h1 class="h3 mb-1"><i class="fa-solid fa-couch me-2"></i>Elige tus asientos</h1>
+  <p class="text-muted mb-4">Elige un pasajero y toca un asiento libre.</p>
 
-@if (seats().length > 0) {
-  <div>
-    @for (seat of seats(); track seat.id) {
-      <button
-        type="button"
-        [disabled]="seat.status === 'OCCUPIED'"
-        [class.selected]="seatForm.value.legSeatId === seat.id"
-        (click)="seatForm.patchValue({ legSeatId: seat.id, legId: legForm.value.legId })">
-        {{ seat.seatCode }}
-      </button>
-    }
-  </div>
-}
+  @if (passengers().length === 0) {
+    <div class="alert alert-info">
+      <i class="fa-solid fa-circle-info me-2"></i>Primero registra los pasajeros de la reserva.
+    </div>
+  } @else {
 
-<form [formGroup]="seatForm" (ngSubmit)="onSubmit()">
-  <div>
-    <label>Pasajero:</label>
-    <input type="text" formControlName="passengerId" placeholder="Documento del pasajero">
-    @if (seatForm.get('passengerId')?.invalid && seatForm.get('passengerId')?.touched) {
-      <div class="error">Please enter a valid passenger ID.</div>
-    }
-  </div>
-
-  <div>
-    Asiento elegido:
-    @for (seat of seats(); track seat.id) {
-      @if (seat.id === seatForm.value.legSeatId) {
-        {{ seat.seatCode }}
+    <!-- Legs: one tab per leg -->
+    <ul class="nav nav-tabs mb-3">
+      @for (leg of legs(); track leg.legId; let i = $index) {
+        <li class="nav-item">
+          <button type="button" class="nav-link" [class.active]="i === activeLegIndex()" (click)="selectLeg(i)">
+            <small class="d-block text-muted">{{ leg.direction }}</small>
+            {{ leg.origin }} → {{ leg.destination }}
+            @if (legComplete(leg.legId)) {
+              <i class="fa-solid fa-circle-check text-success ms-1"></i>
+            }
+          </button>
+        </li>
       }
-    }
-  </div>
+    </ul>
 
-  <button type="submit" [disabled]="seatForm.invalid || bookingId.invalid || isLoading()">Seleccionar asiento</button>
-  <div>{{ result() }}</div>
-</form>
+    <!-- Passengers: one chip per passenger -->
+    <div class="d-flex flex-wrap gap-2 mb-4">
+      @for (passenger of passengers(); track passenger.idDocument) {
+        <button type="button" class="btn rounded-pill"
+                [class.btn-primary]="passenger.idDocument === activePassenger()?.idDocument"
+                [class.btn-outline-primary]="passenger.idDocument !== activePassenger()?.idDocument"
+                (click)="selectPassenger(passenger)">
+          <i class="fa-solid fa-user me-1"></i>{{ passenger.firstName }} {{ passenger.lastName1 }}
+          <span class="badge rounded-pill bg-light text-dark ms-2">{{ seatCodeOf(passenger) ?? '—' }}</span>
+        </button>
+      }
+    </div>
+
+    <div class="row g-4">
+
+      <!-- Cabin -->
+      <div class="col-lg-8">
+        <div class="cabin" [class.saving]="saving()">
+          <div class="cabin-nose"><i class="fa-solid fa-plane-up"></i></div>
+
+          <!-- Column letters -->
+          <div class="cabin-row cabin-header">
+            @for (column of cabin().leftColumns; track column) {
+              <span class="seat-slot">{{ column }}</span>
+            }
+            <span class="aisle"></span>
+            @for (column of cabin().rightColumns; track column) {
+              <span class="seat-slot">{{ column }}</span>
+            }
+          </div>
+
+          <!-- One line per row: left seats, row number (aisle), right seats -->
+          @for (row of cabin().rows; track row.number) {
+            <div class="cabin-row">
+              @for (seat of row.left; track $index) {
+                @if (seat) {
+                  <button type="button" class="seat seat-{{ seatState(seat) }}"
+                          [title]="seatTitle(seat)"
+                          [disabled]="seatState(seat) === 'taken'"
+                          (click)="onSeatClick(seat)">{{ seatLabel(seat) }}</button>
+                } @else {
+                  <span class="seat-slot"></span>
+                }
+              }
+
+              <span class="aisle">{{ row.number }}</span>
+
+              @for (seat of row.right; track $index) {
+                @if (seat) {
+                  <button type="button" class="seat seat-{{ seatState(seat) }}"
+                          [title]="seatTitle(seat)"
+                          [disabled]="seatState(seat) === 'taken'"
+                          (click)="onSeatClick(seat)">{{ seatLabel(seat) }}</button>
+                } @else {
+                  <span class="seat-slot"></span>
+                }
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Side panel: legend and total -->
+      <div class="col-lg-4">
+        <div class="card">
+          <div class="card-body">
+            <h2 class="h6 mb-3">Convenciones</h2>
+            <ul class="list-unstyled mb-0 legend">
+              <li><span class="seat seat-free"></span>Libre</li>
+              <li><span class="seat seat-active"></span>Pasajero seleccionado</li>
+              <li><span class="seat seat-mine">AB</span>Otro pasajero de tu reserva</li>
+              <li><span class="seat seat-taken"></span>Ocupado</li>
+            </ul>
+          </div>
+          <div class="card-footer d-flex justify-content-between">
+            <span>Total de la reserva</span>
+            <strong>{{ totalPrice() | number:'1.0-0' }}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

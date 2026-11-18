@@ -64,7 +64,6 @@ export interface PassengerResponse {
 }
 
 
-// Returned by both endpoints (only the fields used so far; the backend sends more)
 export interface BookingResponse {
     id: string;                     // needed for the return-flight PUT
     numPassengers: number;
@@ -88,10 +87,36 @@ export interface LegSeatMapResponse{
     seats: LegSeatResponse[];
 }
 
+export type SeatStatus = 'AVAILABLE' | 'OCCUPIED';
 export interface LegSeatResponse{
     id: string;
+    seatCode: string;      // row + column, e.g. "12C"
+    status: SeatStatus;
+}
+
+
+export interface PassengerSeatResponse {
+    legId: string;
+    legSeatId: string;
     seatCode: string;
-    status: string;
+}
+
+
+export interface PassengerDetailResponse {
+    idDocument: string;      // it is the passengerId for PUT /seats
+    firstName: string;
+    lastName1: string;
+    holder: boolean;
+    seats: PassengerSeatResponse[];  // one per leg where the passenger already has a seat
+}
+
+// GET /api/bookings/{id} (backend: BookingDetailResponse).
+export interface BookingDetail {
+    id: string;
+    numPassengers: number;
+    price: number;
+    bookingStatus: string;
+    passengers: PassengerDetailResponse[];
 }
 
 export interface AddPassengersRequest{
@@ -112,3 +137,4 @@ export interface PassengerRequest{
     birthDate: string;
     gender: Gender
 }
+
