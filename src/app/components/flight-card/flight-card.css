@@ -1,0 +1,8 @@
+.flight-card {
+    transition: box-shadow 0.2s ease;
+}
+
+.flight-card.international-flight {
+    border-left: 4px solid #080e4d;
+    padding-left: 0.5rem;
+}
