@@ -108,6 +108,7 @@ export interface PassengerDetailResponse {
     lastName1: string;
     holder: boolean;
     seats: PassengerSeatResponse[];  // one per leg where the passenger already has a seat
+    luggage: LuggageDetailResponse | null;
 }
 
 // GET /api/bookings/{id} (backend: BookingDetailResponse).
@@ -138,3 +139,8 @@ export interface PassengerRequest{
     gender: Gender
 }
 
+// PUT /api/bookings/{id}/luggage (backend: AddLuggageRequest)
+export interface AddLuggageRequest {
+    passengerId: string;   // idDocument of the passenger
+    quantity: number;      // pieces of 23 kg on every leg, greater than 0
+}

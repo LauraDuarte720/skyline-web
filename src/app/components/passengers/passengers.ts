@@ -24,7 +24,7 @@ export class Passengers {
   protected bookingFlow = inject(BookingFlowService);   // protected: the HTML uses it
 
   isLoading = signal(false);
-  passengersSaved = signal(false);
+  stepCompleted = signal(false);   // true after the PUT succeeds: the leave guard lets the user go = signal(false);
 
   // Options for the <select>s: value = what the backend expects, label = what the user sees
   documentTypes: { value: DocumentType; label: string }[] = [
@@ -121,7 +121,7 @@ export class Passengers {
       .subscribe({
         next: () => {
           this.isLoading.set(false);
-          this.passengersSaved.set(true); 
+          this.stepCompleted.set(true); 
           this.announcement.success('Pasajeros registrados correctamente.');
           this.router.navigate(['/seat-selector']);   // next step of the booking
         },
