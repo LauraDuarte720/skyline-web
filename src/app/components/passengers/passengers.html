@@ -1,0 +1,131 @@
+<div class="container mt-4">
+  <h1 id="title-passengers" class="h3 mb-4">
+    <i class="fa-solid fa-users me-2"></i>Pasajeros
+  </h1>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+    <!-- Una tarjeta por pasajero -->
+    <div formArrayName="passengers">
+      @for (passenger of passengerForms; track $index) {
+        <div class="card mb-3 passenger-card"
+             [class.holder-card]="form.controls.holderIndex.value === $index"
+             [formGroupName]="$index">
+
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <span class="fw-semibold">
+              <i class="fa-solid fa-user me-2"></i>Pasajero {{ $index + 1 }}
+            </span>
+            <div class="form-check mb-0">
+              <input type="radio" class="form-check-input" id="holder{{ $index }}"
+                     [formControl]="form.controls.holderIndex" [value]="$index">
+              <label class="form-check-label" for="holder{{ $index }}">Titular de la reserva</label>
+            </div>
+          </div>
+
+          <div class="card-body row g-3">
+            <div class="col-md-4">
+              <label class="form-label">Tipo de documento</label>
+              <select formControlName="documentType" class="form-select">
+                @for (type of documentTypes; track type.value) {
+                  <option [value]="type.value">{{ type.label }}</option>
+                }
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Número de documento</label>
+              <input type="text" formControlName="idDocument" class="form-control">
+              @if (passenger.controls.idDocument.invalid && passenger.controls.idDocument.touched) {
+                <div class="error">El documento es obligatorio.</div>
+              }
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Género</label>
+              <select formControlName="gender" class="form-select">
+                <option value="" disabled>Selecciona</option>
+                @for (gender of genders; track gender.value) {
+                  <option [value]="gender.value">{{ gender.label }}</option>
+                }
+              </select>
+              @if (passenger.controls.gender.invalid && passenger.controls.gender.touched) {
+                <div class="error">Selecciona un género.</div>
+              }
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label">Primer nombre</label>
+              <input type="text" formControlName="firstName" class="form-control">
+              @if (passenger.controls.firstName.invalid && passenger.controls.firstName.touched) {
+                <div class="error">El primer nombre es obligatorio.</div>
+              }
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Segundo nombre <span class="text-muted small">(opcional)</span></label>
+              <input type="text" formControlName="secondName" class="form-control">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Primer apellido</label>
+              <input type="text" formControlName="lastName1" class="form-control">
+              @if (passenger.controls.lastName1.invalid && passenger.controls.lastName1.touched) {
+                <div class="error">El primer apellido es obligatorio.</div>
+              }
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Segundo apellido <span class="text-muted small">(opcional)</span></label>
+              <input type="text" formControlName="lastName2" class="form-control">
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">Fecha de nacimiento</label>
+              <input type="date" formControlName="birthDate" class="form-control" [max]="today">
+              @if (passenger.controls.birthDate.invalid && passenger.controls.birthDate.touched) {
+                <div class="error">La fecha de nacimiento es obligatoria.</div>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Contacto del titular (una sola vez) -->
+    <div class="card mb-3">
+      <div class="card-header fw-semibold">
+        <i class="fa-solid fa-address-book me-2"></i>Contacto del titular
+      </div>
+      <div class="card-body row g-3">
+        <div class="col-md-5">
+          <label class="form-label">Email</label>
+          <input type="email" formControlName="email" class="form-control" placeholder="correo@ejemplo.com">
+          @if (form.controls.email.invalid && form.controls.email.touched) {
+            <div class="error">Escribe un email válido.</div>
+          }
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Prefijo</label>
+          <select formControlName="phonePrefix" class="form-select">
+            @for (prefix of phonePrefixes; track prefix.value) {
+              <option [value]="prefix.value">{{ prefix.label }}</option>
+            }
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Teléfono</label>
+          <input type="tel" formControlName="phoneNumber" class="form-control" placeholder="3001234567">
+          @if (form.controls.phoneNumber.invalid && form.controls.phoneNumber.touched) {
+            <div class="error">Escribe solo números (7 a 15 dígitos).</div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="text-end mb-5">
+      <button type="submit" class="btn btn-success" [disabled]="isLoading()">
+        @if (isLoading()) {
+          Guardando...
+        } @else {
+          Continuar<i class="fa-solid fa-arrow-right ms-2"></i>
+        }
+      </button>
+    </div>
+  </form>
+</div>
