@@ -1,0 +1,75 @@
+<div class="container mt-4">
+  <h1 id="title-luggage" class="h3 mb-2">
+    <i class="fa-solid fa-suitcase-rolling me-2"></i>Equipaje
+  </h1>
+  <p class="text-muted mb-4">
+    Cada maleta pesa hasta 23 kg y se lleva en todos los tramos del viaje.
+    @if (maxLuggage(); as max) {
+      Máximo <strong>{{ max }}</strong> maleta(s) por pasajero.
+    }
+    @if (pricePerBag(); as price) {
+      Cada maleta cuesta <strong>{{ price | number:'1.0-0' }}</strong>.
+    } @else {
+      El precio por maleta aparece al agregar la primera.
+    }
+  </p>
+
+  @if (isLoading()) {
+    <div class="text-center py-5 text-muted">
+      <i class="fa-solid fa-spinner fa-spin fa-2x mb-2"></i>
+      <p>Cargando pasajeros...</p>
+    </div>
+  } @else {
+    @for (passenger of passengers(); track passenger.idDocument) {
+      <div class="card mb-3 luggage-card">
+        <div class="card-body d-flex flex-wrap justify-content-between align-items-center gap-3">
+          <div>
+            <p class="fw-semibold mb-1">
+              <i class="fa-solid fa-user me-2"></i>
+              {{ passenger.firstName }} {{ passenger.lastName1 }}
+              @if (passenger.holder) {
+                <span class="badge bg-primary-subtle ms-2">Titular</span>
+              }
+            </p>
+            <p class="text-muted small mb-0">Documento: {{ passenger.idDocument }}</p>
+            @if (passenger.luggage; as luggage) {
+              <p class="text-muted small mb-0">Subtotal equipaje: {{ luggage.subTotal | number:'1.0-0' }}</p>
+            }
+          </div>
+
+          <!-- Counter: every click saves in the backend -->
+          <div class="d-flex align-items-center gap-2">
+            <button type="button" class="btn btn-outline-secondary btn-sm counter-btn"
+                    [disabled]="!canRemove(passenger)"
+                    (click)="remove(passenger)" title="Quitar una maleta">
+              <i class="fa-solid fa-minus"></i>
+            </button>
+            <span class="counter-value">
+              @if (savingPassengerId() === passenger.idDocument) {
+                <i class="fa-solid fa-spinner fa-spin"></i>
+              } @else {
+                {{ quantityOf(passenger) }}
+              }
+            </span>
+            <button type="button" class="btn btn-outline-primary btn-sm counter-btn"
+                    [disabled]="!canAdd(passenger)"
+                    (click)="add(passenger)" title="Agregar una maleta">
+              <i class="fa-solid fa-plus"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    <div class="d-flex justify-content-between align-items-center mb-5">
+      @if (bookingPrice() !== null) {
+        <span>Total de la reserva: <strong>{{ bookingPrice() | number:'1.0-0' }}</strong></span>
+      }
+      <button type="button" class="btn btn-success ms-auto"
+              [disabled]="savingPassengerId() !== null"
+              (click)="onContinue()">
+        Continuar<i class="fa-solid fa-arrow-right ms-2"></i>
+      </button>
+    </div>
+  }
+</div>
