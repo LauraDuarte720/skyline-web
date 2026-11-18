@@ -1,6 +1,7 @@
 import { Injectable, inject } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { SelectOutboundFlightRequest, SelectReturnFlightRequest, BookingResponse, SelectSeatRequest, LegSeatMapResponse, BookingDetail } from "../flights/booking";
+import { SelectOutboundFlightRequest, SelectReturnFlightRequest, BookingResponse, SelectSeatRequest, LegSeatMapResponse, AddPassengersRequest, BookingDetail } from "../flights/booking";
+
 
 @Injectable({providedIn: "root"})
 export class BookingService {
@@ -28,7 +29,12 @@ export class BookingService {
         return this.http.put<BookingResponse>(`${this.url}/${bookingId}/cancel`, {});
     }
 
-        getBooking(bookingId: string) {
+
+    getBooking(bookingId: string) {
         return this.http.get<BookingDetail>(`${this.url}/${bookingId}`);
+    }
+
+    addPassengers(bookingId: string, request: AddPassengersRequest){
+        return this.http.put<BookingResponse>(`${this.url}/${bookingId}/passengers`, request)
     }
 }
