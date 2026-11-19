@@ -82,9 +82,9 @@ export class Luggage implements BookingStep {
     return this.savingPassengerId() === null && (max === null || this.quantityOf(passenger) < max);
   }
 
-  // The backend cannot remove luggage (quantity must be > 0): the minimum is 1
+  // Going down to 0 removes the passenger's luggage (the backend subtracts its price)
   canRemove(passenger: PassengerDetailResponse): boolean {
-    return this.savingPassengerId() === null && this.quantityOf(passenger) > 1;
+    return this.savingPassengerId() === null && this.quantityOf(passenger) > 0;
   }
 
   add(passenger: PassengerDetailResponse): void {
