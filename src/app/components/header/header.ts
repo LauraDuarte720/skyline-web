@@ -12,6 +12,7 @@ export class Header {
   private router = inject(Router);
 
   isLoggedIn = this.authService.isAuthenticated;
+  isAirlineUser = this.authService.isAirlineUser;
 
   closeSession():void {
     this.authService.logout();

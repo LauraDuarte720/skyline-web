@@ -40,7 +40,8 @@ export class Login {
         next: (response) => {
           this.authService.saveSession(response);
           this.result.set('Login successful');
-          this.router.navigate(['/']); 
+          // Airline users go to their panel, the rest to the home page
+          this.router.navigate([this.authService.isAirlineUser() ? '/airline' : '/']);
         },
         error : () => {
           this.isLoading.set(false);
