@@ -17,6 +17,8 @@ import { AirlineExtraServices } from './components/airline-extra-services/airlin
 import { AirlineSellers } from './components/airline-sellers/airline-sellers';
 import { AirlineAircrafts } from './components/airline-aircrafts/airline-aircrafts';
 import { AirlineLegs } from './components/airline-legs/airline-legs';
+import { AdminPanel } from './components/admin-panel/admin-panel';
+import { AdminAirlines } from './components/admin-airlines/admin-airlines';
 
 export const routes: Routes = [
     { path: '', component: Home },
@@ -34,5 +36,7 @@ export const routes: Routes = [
     {path: 'airline/sellers', component: AirlineSellers, canActivate: [roleGuard('AIRLINE_ADMIN')]},   // only the admin
     {path: 'airline/aircrafts', component: AirlineAircrafts, canActivate: [roleGuard('AIRLINE_ADMIN', 'AIRLINE_SELLER')]},
     {path: 'airline/legs', component: AirlineLegs, canActivate: [roleGuard('AIRLINE_ADMIN', 'AIRLINE_SELLER')]},
+    {path: 'admin', component: AdminPanel, canActivate: [roleGuard('ADMIN')]},
+    {path: 'admin/airlines', component: AdminAirlines, canActivate: [roleGuard('ADMIN')]},
     { path: '**', pathMatch: 'full', redirectTo: '' },
 ];
