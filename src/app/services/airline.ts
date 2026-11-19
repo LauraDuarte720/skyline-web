@@ -30,4 +30,9 @@ export class AirlineService {
     getTop(limit = 5) {
         return this.http.get<TopAirline[]>(`${this.url}/top`, { params: { limit } });
     }
+
+    // POST /api/airlines/{id}/admins: only the ADMIN; here the airline goes in the URL
+    registerAirlineAdmin(airlineId: string, request: RegisterUserRequest) {
+        return this.http.post<UserResponse>(`${this.url}/${airlineId}/admins`, request);
+    }
 }
