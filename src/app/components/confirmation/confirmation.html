@@ -1,0 +1,89 @@
+<div class="container mt-5 mb-5 confirmation">
+  @if (isLoading()) {
+    <div class="text-center py-5 text-muted">
+      <i class="fa-solid fa-spinner fa-spin fa-2x mb-2"></i>
+      <p>Cargando tu reserva...</p>
+    </div>
+  } @else {
+    @if (booking(); as booking) {
+      <div class="text-center mb-4">
+        <i class="fa-solid fa-circle-check fa-4x text-success mb-3"></i>
+        <h1 id="title-confirmation" class="h3">¡Reserva confirmada!</h1>
+        @if (holder(); as holder) {
+          <p class="text-muted mb-0">
+            Gracias, {{ holder.firstName }}. Guarda tu código de reserva para consultarla después.
+          </p>
+        }
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <!-- Booking code -->
+          <p class="small text-muted mb-1">Código de reserva</p>
+          <p class="booking-code mb-3">{{ booking.id }}</p>
+
+          <!-- Payment -->
+          @if (approvedPayment(); as payment) {
+            <div class="d-flex justify-content-between small mb-1">
+              <span class="text-muted">Transacción</span>
+              <span class="booking-code">{{ payment.transactionId }}</span>
+            </div>
+            <div class="d-flex justify-content-between small mb-1">
+              <span class="text-muted">Fecha del pago</span>
+              <span>{{ payment.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+            </div>
+          }
+
+          <!-- Flights -->
+          <hr>
+          @for (flight of [outboundFlight, returnFlight]; track $index) {
+            @if (flight) {
+              <div class="mb-2">
+                <p class="fw-semibold mb-0">
+                  <i class="fa-solid fa-plane me-1"></i>
+                  {{ $index === 0 ? 'Ida' : 'Regreso' }}:
+                  {{ flight.originAirport }} → {{ flight.destinationAirport }}
+                </p>
+                <p class="small text-muted mb-0">
+                  {{ flight.departureTime | date:'dd/MM/yyyy HH:mm' }} – {{ flight.arrivalTime | date:'HH:mm' }}
+                  · {{ flight.layovers.length === 0 ? 'Directo' : flight.layovers.length + ' escala(s)' }}
+                </p>
+              </div>
+            }
+          }
+
+          <!-- Passengers -->
+          <hr>
+          <p class="small text-muted mb-1">Pasajeros</p>
+          @for (passenger of booking.passengers; track passenger.idDocument) {
+            <p class="mb-1">
+              <i class="fa-solid fa-user me-1"></i>{{ passenger.firstName }} {{ passenger.lastName1 }}
+              @if (passenger.holder) {
+                <span class="badge text-bg-secondary ms-1">Titular</span>
+              }
+            </p>
+          }
+
+          <!-- Total paid -->
+          <hr>
+          <div class="d-flex justify-content-between fw-bold fs-5">
+            <span>Total pagado</span>
+            <span>{{ booking.price | number:'1.0-0' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center mt-4">
+        <a routerLink="/" class="btn btn-primary">
+          <i class="fa-solid fa-house me-2"></i>Volver al inicio
+        </a>
+      </div>
+    } @else {
+      <!-- The GET failed: the payment was approved, but the booking could not be shown -->
+      <div class="text-center py-5">
+        <p class="text-muted">Tu pago fue aprobado, pero no pudimos mostrar tu reserva.</p>
+        <a routerLink="/" class="btn btn-outline-primary">Volver al inicio</a>
+      </div>
+    }
+  }
+</div>
