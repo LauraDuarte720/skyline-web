@@ -11,6 +11,8 @@ import { Passengers } from './components/passengers/passengers';
 import { Payment } from './components/payment/payment';
 import { ExtraServices } from './components/extra-services/extra-services';
 import { Confirmation } from './components/confirmation/confirmation';
+import { roleGuard } from './guards/role-guard';
+import { AirlinePanel } from './components/airline-panel/airline-panel';
 
 export const routes: Routes = [
     { path: '', component: Home },
@@ -23,5 +25,6 @@ export const routes: Routes = [
     {path: 'payment', component: Payment, canDeactivate: [leaveBookingGuard]},
     {path: 'extra-services', component: ExtraServices, canDeactivate: [leaveBookingGuard]},
     {path: 'confirmation', component: Confirmation},   // no guard: the booking is already paid
+    {path: 'airline', component: AirlinePanel, canActivate: [roleGuard('AIRLINE_ADMIN', 'AIRLINE_SELLER')]},
     { path: '**', pathMatch: 'full', redirectTo: '' },
 ];
