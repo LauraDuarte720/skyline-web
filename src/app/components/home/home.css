@@ -1,0 +1,112 @@
+/* Hero: a sky from deep blue to light blue */
+.hero {
+    background: linear-gradient(135deg, #0b1d51 0%, #1f4e9c 55%, #4facfe 100%);
+}
+
+.hero-badge {
+    background-color: rgba(255, 255, 255, 0.15);
+    font-weight: 500;
+}
+
+.hero-plane {
+    font-size: 11rem;
+    opacity: 0.25;
+    transform: rotate(-10deg);
+}
+
+.stats {
+    background-color: #f8f9fa;
+}
+
+/* Same burlywood title as the other pages, a bit smaller */
+.section-title {
+    color: burlywood;
+    text-transform: uppercase;
+    letter-spacing: 0.3rem;
+}
+
+/* Destination cards: the gradient comes from the component */
+.destination-card {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    height: 170px;
+    padding: 0.75rem;
+    border-radius: 0.75rem;
+    color: white;
+    text-decoration: none;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.destination-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
+}
+
+.destination-icon {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    font-size: 2.5rem;
+    opacity: 0.6;
+}
+
+.destination-code {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+}
+
+.destination-text {
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    line-height: 1.2;
+}
+
+/* Airline cards */
+.airline-card {
+    transition: box-shadow 0.2s;
+}
+
+.airline-card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+}
+
+.airline-logo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1f4e9c, #4facfe);
+    color: white;
+    font-size: 1.4rem;
+    font-weight: bold;
+}
+
+.airline-fact {
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+}
+
+/* Steps */
+.step-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    background-color: #e7f0ff;
+    color: #1f4e9c;
+    font-size: 1.4rem;
+}
+
+/* Invite to create an account */
+.cta {
+    background: linear-gradient(135deg, #1f4e9c, #4facfe);
+    border-radius: 1rem;
+    padding: 2rem;
+}
