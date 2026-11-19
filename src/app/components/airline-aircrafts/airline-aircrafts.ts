@@ -1,7 +1,8 @@
 import { Component, DestroyRef, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { catchError, of, switchMap } from 'rxjs';
 import { AIRCRAFT_MODELS, AircraftModel, AircraftResponse } from '../../flights/aircraft';
 import { AircraftService } from '../../services/aircraft';
 import { NotificationsService } from '../../services/notifications';
@@ -20,10 +21,28 @@ export class AirlineAircrafts {
 
   models = AIRCRAFT_MODELS;
 
+  // ================= List: the aircraft of the airline (GET /api/aircrafts) =================
+
+  private reload = signal(0);   // +1 after creating one: asks the list again
+
+  // Same idea as the airlines page: when reload changes, switchMap asks the backend again
+  aircrafts = toSignal(
+    toObservable(this.reload).pipe(
+      switchMap(() =>
+        this.aircraftService.getMine().pipe(
+          catchError(() => {
+            this.announcement.error('No pudimos cargar los aviones.');
+            return of([] as AircraftResponse[]);
+          })
+        )
+      )
+    ),
+    { initialValue: [] as AircraftResponse[] }
+  );
+
+  // ================= Create =================
+
   isSaving = signal(false);
-  // Aircraft created while the page is open. The backend has no endpoint to list them,
-  // so this list starts empty every time the page opens.
-  created = signal<AircraftResponse[]>([]);
 
   aircraftForm = inject(FormBuilder).nonNullable.group({
     aircraftModel: ['' as AircraftModel | '', Validators.required],
@@ -43,22 +62,15 @@ export class AirlineAircrafts {
       .subscribe({
         next: (aircraft) => {
           this.isSaving.set(false);
-          this.created.update((list) => [aircraft, ...list]);   // the newest first
           this.announcement.success(`Avión ${this.labelOf(aircraft.aircraftModel)} registrado.`);
           this.aircraftForm.reset();
+          this.reload.update(r => r + 1);
         },
         error: (error) => {
           this.isSaving.set(false);
           this.handleError(error);
         },
       });
-  }
-
-  // The id is needed to create a leg: copy it so the user can paste it there
-  copyId(aircraft: AircraftResponse): void {
-    navigator.clipboard.writeText(aircraft.id)
-      .then(() => this.announcement.info('Id copiado.'))
-      .catch(() => this.announcement.error('No se pudo copiar, selecciónalo y cópialo a mano.'));
   }
 
   labelOf(model: AircraftModel): string {
