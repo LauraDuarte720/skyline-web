@@ -14,6 +14,7 @@ import { Confirmation } from './components/confirmation/confirmation';
 import { roleGuard } from './guards/role-guard';
 import { AirlinePanel } from './components/airline-panel/airline-panel';
 import { AirlineExtraServices } from './components/airline-extra-services/airline-extra-services';
+import { AirlineSellers } from './components/airline-sellers/airline-sellers';
 
 export const routes: Routes = [
     { path: '', component: Home },
@@ -28,5 +29,6 @@ export const routes: Routes = [
     {path: 'confirmation', component: Confirmation},   // no guard: the booking is already paid
     {path: 'airline', component: AirlinePanel, canActivate: [roleGuard('AIRLINE_ADMIN', 'AIRLINE_SELLER')]},
     {path: 'airline/extra-services', component: AirlineExtraServices, canActivate: [roleGuard('AIRLINE_ADMIN', 'AIRLINE_SELLER')]},
+    {path: 'airline/sellers', component: AirlineSellers, canActivate: [roleGuard('AIRLINE_ADMIN')]},   // only the admin
     { path: '**', pathMatch: 'full', redirectTo: '' },
 ];

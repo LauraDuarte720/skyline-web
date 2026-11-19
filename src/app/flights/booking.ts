@@ -3,6 +3,21 @@ export type DocumentType = 'CITIZENSHIP_ID'| 'FOREIGNER_ID'| 'PASSPORT'|
     'IDENTITY_CARD'|'CIVIL_REGISTRATION';
 export type Gender = 'FEMALE'|'MALE'|'OTHER';
 
+// Options for the <select>s: value = what the backend expects, label = what the user sees
+export const DOCUMENT_TYPES: { value: DocumentType; label: string }[] = [
+    { value: 'CITIZENSHIP_ID', label: 'Cédula de ciudadanía' },
+    { value: 'FOREIGNER_ID', label: 'Cédula de extranjería' },
+    { value: 'PASSPORT', label: 'Pasaporte' },
+    { value: 'IDENTITY_CARD', label: 'Tarjeta de identidad' },
+    { value: 'CIVIL_REGISTRATION', label: 'Registro civil' },
+];
+
+export const GENDERS: { value: Gender; label: string }[] = [
+    { value: 'FEMALE', label: 'Femenino' },
+    { value: 'MALE', label: 'Masculino' },
+    { value: 'OTHER', label: 'Otro' },
+];
+
 export type PhonePrefix = 'COLOMBIA' | 'UNITED_STATES' | 'CANADA' | 'MEXICO' | 'ARGENTINA'
     | 'BRAZIL' | 'CHILE' | 'PERU' | 'ECUADOR' | 'VENEZUELA' | 'SPAIN' | 'UNITED_KINGDOM'
     | 'FRANCE' | 'GERMANY' | 'ITALY' | 'PORTUGAL' | 'CHINA' | 'JAPAN' | 'SOUTH_KOREA' | 'AUSTRALIA';
