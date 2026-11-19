@@ -2,7 +2,7 @@ import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { catchError, of } from 'rxjs';
+import { catchError, of, startWith, switchMap } from 'rxjs';
 import { DOCUMENT_TYPES, DocumentType, GENDERS, Gender } from '../../flights/booking';
 import { RegisterUserRequest, UserResponse } from '../../flights/auth';
 import { Airline } from '../../flights/airline';
@@ -59,6 +59,24 @@ export class AdminAirlineAdmins {
     gender: ['' as Gender | '', Validators.required],
   });
 
+  // Admins of the airline chosen in the <select> (GET /api/airlines/{id}/admins).
+  // Every time the airline changes, switchMap asks the backend again. null: no airline chosen.
+  admins = toSignal(
+    this.adminForm.controls.airlineId.valueChanges.pipe(
+      startWith(this.adminForm.controls.airlineId.value),
+      switchMap((airlineId) => {
+        if (!airlineId) return of(null);
+        return this.airlineService.getAirlineAdmins(airlineId).pipe(
+          catchError(() => {
+            this.announcement.error('No pudimos cargar los administradores de la aerolínea.');
+            return of([] as UserResponse[]);
+          })
+        );
+      })
+    ),
+    { initialValue: null as UserResponse[] | null }
+  );
+
   onSubmit(): void {
     if (this.adminForm.invalid || this.isSaving()) {
       this.adminForm.markAllAsTouched();
@@ -89,7 +107,8 @@ export class AdminAirlineAdmins {
           this.isSaving.set(false);
           this.created.set({ user, airlineName });
           this.announcement.success(`Administrador ${user.email} registrado.`);
-          this.adminForm.reset();
+          // Keep the airline: its list of admins is asked again and shows the new one
+          this.adminForm.reset({ airlineId: form.airlineId });
         },
         error: (error) => {
           this.isSaving.set(false);
