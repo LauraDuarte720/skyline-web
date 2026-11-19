@@ -117,7 +117,10 @@ export interface BookingDetail {
     numPassengers: number;
     price: number;
     bookingStatus: string;
+    paymentDeadline: string;                        // new: LocalDateTime, no time zone
     passengers: PassengerDetailResponse[];
+    extraServices: BookingExtraServiceResponse[];   // new
+    payments: PaymentResponse[];                    // new
 }
 
 export interface AddPassengersRequest{
@@ -139,8 +142,29 @@ export interface PassengerRequest{
     gender: Gender
 }
 
-// PUT /api/bookings/{id}/luggage (backend: AddLuggageRequest)
 export interface AddLuggageRequest {
     passengerId: string;   // idDocument of the passenger
     quantity: number;      // pieces of 23 kg on every leg, greater than 0
+}
+
+export type PaymentStatus = 'PENDING' | 'APPROVED' | 'DECLINED' | 'ERROR';
+
+export interface PaymentResponse {
+    id: string;
+    amount: number;
+    status: PaymentStatus;
+    transactionId: string | null;   // only when the provider processed it
+    message: string | null;         // provider's reason, e.g. "Insufficient funds"
+    createdAt: string;
+}
+
+export interface BookingExtraServiceResponse {
+    extraServiceId: string;
+    quantity: number;
+    subtotal: number;
+}
+
+// Backend: PayBookingRequest
+export interface PayBookingRequest {
+    paymentToken: string;
 }
