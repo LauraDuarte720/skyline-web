@@ -145,8 +145,7 @@ export class ExtraServices implements BookingStep {
 
   onContinue(): void {
     this.stepCompleted.set(true);   // must be before navigate, the guard checks it
-    // TODO: change to the payment page when it exists
-    this.router.navigate(['/']);
+    this.router.navigate(['/payment']);   // next step of the booking
   }
 
   // ---------- PUT /api/bookings/{id}/extra-services ----------
