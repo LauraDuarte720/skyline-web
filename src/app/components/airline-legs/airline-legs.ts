@@ -40,10 +40,10 @@ export class AirlineLegs {
     { initialValue: null }
   );
 
-  // "Airbus A320neo · 194 sillas · a1b2c3": the short id tells apart two aircraft of the same model
+  // "Airbus A320neo · 194 sillas · …b76d1b": the end of the id tells apart two aircraft of the same model
   aircraftLabel(aircraft: AircraftResponse): string {
     const model = AIRCRAFT_MODELS.find((m) => m.value === aircraft.aircraftModel)?.label ?? aircraft.aircraftModel;
-    return `${model} · ${aircraft.seats.length} sillas · ${aircraft.id.slice(0, 6)}`;
+    return `${model} · ${aircraft.seats.length} sillas · …${aircraft.id.slice(-6)}`;
   }
 
   isSaving = signal(false);
