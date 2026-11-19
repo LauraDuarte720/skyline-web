@@ -1,0 +1,66 @@
+<div class="container mt-4">
+  <h1 id="title-admin-airlines" class="h3 mb-4">
+    <i class="fa-solid fa-building me-2"></i>Aerolíneas
+  </h1>
+
+  <!-- ===== Create ===== -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h2 class="h6 mb-1">Nueva aerolínea</h2>
+      <p class="small text-muted mb-3">
+        El máximo de maletas y el precio de silla no se pueden cambiar después.
+      </p>
+      <form [formGroup]="airlineForm" (ngSubmit)="onCreate()" class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Nombre</label>
+          <input type="text" formControlName="name" class="form-control">
+          @if (airlineForm.controls.name.invalid && airlineForm.controls.name.touched) {
+            <div class="error">El nombre es obligatorio.</div>
+          }
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">Máximo de maletas por pasajero</label>
+          <input type="number" min="1" formControlName="maximumLuggageAmount" class="form-control">
+          @if (airlineForm.controls.maximumLuggageAmount.invalid && airlineForm.controls.maximumLuggageAmount.touched) {
+            <div class="error">Debe ser 1 o más.</div>
+          }
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">Precio por escoger silla</label>
+          <input type="number" min="0" formControlName="seatPrice" class="form-control">
+          @if (airlineForm.controls.seatPrice.invalid && airlineForm.controls.seatPrice.touched) {
+            <div class="error">Debe ser 0 o más.</div>
+          }
+        </div>
+
+        <div class="col-12 text-end">
+          <button type="submit" class="btn btn-primary" [disabled]="isSaving()">
+            @if (isSaving()) {
+              <i class="fa-solid fa-spinner fa-spin me-1"></i>Creando...
+            } @else {
+              <i class="fa-solid fa-plus me-1"></i>Crear aerolínea
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== List ===== -->
+  <h2 class="h6 mb-2">Aerolíneas registradas ({{ airlines().length }})</h2>
+  @for (airline of airlines(); track airline.id) {
+    <div class="card mb-2">
+      <div class="card-body">
+        <p class="fw-semibold mb-1">{{ airline.name }}</p>
+        <p class="small text-muted mb-0">
+          Máximo {{ airline.maximumLuggageAmount }} maleta(s) por pasajero ·
+          Silla {{ airline.priceSeats | number:'1.0-0' }}
+        </p>
+      </div>
+    </div>
+  } @empty {
+    <p class="text-muted text-center py-4">No hay aerolíneas registradas.</p>
+  }
+</div>
