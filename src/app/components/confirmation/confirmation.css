@@ -1,0 +1,17 @@
+/* Same style as the other titles of the booking flow */
+#title-confirmation {
+    color: burlywood;
+    text-transform: uppercase;
+    letter-spacing: 0.3rem;
+}
+
+.confirmation {
+    max-width: 640px;
+}
+
+/* Ids are long: monospace and they can break on small screens */
+.booking-code {
+    font-family: monospace;
+    font-size: 1.05rem;
+    word-break: break-all;
+}
