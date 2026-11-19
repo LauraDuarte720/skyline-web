@@ -1,6 +1,6 @@
 import { Injectable, computed, inject, signal } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { LoginRequest, Role, tokenResponse } from "../flights/auth";
+import { LoginRequest, RegisterUserRequest, Role, tokenResponse, UserResponse } from "../flights/auth";
 
 @Injectable({providedIn: "root"}) //Una sola copia de este servicio para toda la app
 export class AuthService {
@@ -19,6 +19,12 @@ export class AuthService {
 
     login(credentials: LoginRequest) {
     return this.http.post<tokenResponse>(`${this.url}/login`, credentials); 
+    }
+
+    // POST /api/auth/register: anyone can do it and the user is always a CUSTOMER.
+    // It returns the user, not a token: to enter you still have to log in.
+    register(request: RegisterUserRequest) {
+        return this.http.post<UserResponse>(`${this.url}/register`, request);
     }
 
     saveSession(response: tokenResponse): void { 
