@@ -1,0 +1,15 @@
+#title-airline {
+    color: burlywood;
+    text-transform: uppercase;
+    letter-spacing: 0.5rem;
+}
+
+/* The whole card is a link: lift it a little on hover */
+.panel-card {
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.panel-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+}

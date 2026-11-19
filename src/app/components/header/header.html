@@ -36,6 +36,13 @@
             <i class="fa-solid fa-chair me-1"></i>Seleccionar asiento
           </a>
         </li>
+        @if (isAirlineUser()) {
+          <li class="nav-item">
+            <a routerLink="/airline" routerLinkActive="active" class="nav-link">
+              <i class="fa-solid fa-building me-1"></i>Mi aerolínea
+            </a>
+          </li>
+        }
       </ul>
 
       <div class="d-flex gap-2">
