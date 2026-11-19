@@ -158,6 +158,7 @@ export class Payment implements BookingStep {
     this.bookingService.pay(bookingId, { paymentToken }).subscribe({
       next: () => {
         // paying stays true: the button stays disabled while the page changes
+        this.announcement.success('El pago fue aprobado. ¡Gracias por tu compra!');
         this.stepCompleted.set(true);   // before navigate, the guard checks it
         this.router.navigate(['/confirmation']);
       },
