@@ -12,4 +12,9 @@ export class AircraftService {
     create(request: CreateAircraftRequest) {
         return this.http.post<AircraftResponse>(this.url, request);
     }
+
+    // GET /api/aircrafts: the aircraft of the airline in the token
+    getMine() {
+        return this.http.get<AircraftResponse[]>(this.url);
+    }
 }

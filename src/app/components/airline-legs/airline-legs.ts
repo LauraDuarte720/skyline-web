@@ -3,17 +3,20 @@ import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-i
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { AIRCRAFT_MODELS, AircraftResponse } from '../../flights/aircraft';
 import { catchError, of, switchMap } from 'rxjs';
 import { Airport } from '../../flights/airport';
 import { Page } from '../../flights/extra-service';
 import { CreateLegRequest, LegResponse } from '../../flights/leg';
+import { AircraftService } from '../../services/aircraft';
 import { AirportService } from '../../services/airport';
 import { LegService } from '../../services/leg';
 import { NotificationsService } from '../../services/notifications';
 import { arrivalAfterDeparture, differentAirports } from '../../validators/form-validators';
 
 @Component({
-  imports: [ReactiveFormsModule, DatePipe, DecimalPipe],
+  imports: [ReactiveFormsModule, DatePipe, DecimalPipe, RouterLink],
   selector: 'app-airline-legs',
   styleUrl: './airline-legs.css',
   templateUrl: './airline-legs.html',
@@ -26,6 +29,24 @@ export class AirlineLegs {
 
   // Catalog of airports for the <select>s (the same list as the flights search)
   airports = toSignal(inject(AirportService).getAirports(), { initialValue: [] as Airport[] });
+
+
+  // Aircraft of the airline for the <select> (GET /api/aircrafts). null while they load.
+  aircrafts = toSignal<AircraftResponse[] | null>(
+    inject(AircraftService).getMine().pipe(
+      catchError(() => {
+        this.announcement.error('No pudimos cargar tus aviones.');
+        return of([] as AircraftResponse[]);
+      })
+    ),
+    { initialValue: null }
+  );
+
+  // "Airbus A320neo · 194 sillas · …b76d1b": the end of the id tells apart two aircraft of the same model
+  aircraftLabel(aircraft: AircraftResponse): string {
+    const model = AIRCRAFT_MODELS.find((m) => m.value === aircraft.aircraftModel)?.label ?? aircraft.aircraftModel;
+    return `${model} · ${aircraft.seats.length} sillas · …${aircraft.id.slice(-6)}`;
+  }
 
   // ================= List: same pagination pattern as the extra services page =================
 
@@ -59,7 +80,6 @@ export class AirlineLegs {
   previous(): void { this.page.update(p => p - 1); }
   next(): void { this.page.update(p => p + 1); }
 
-  // ================= Create =================
 
   isSaving = signal(false);
 
@@ -86,7 +106,7 @@ export class AirlineLegs {
       destinationAirport: form.destination,
       departureTime: form.departureTime,
       arrivalTime: form.arrivalTime,
-      aircraftId: form.aircraftId.trim(),   // a copied id may bring spaces
+      aircraftId: form.aircraftId,
       luggagePrice: form.luggagePrice,
       price: form.price,
     };
@@ -112,7 +132,7 @@ export class AirlineLegs {
 
   private handleError(error: HttpErrorResponse): void {
     if (error.status === 404) {
-      this.announcement.error('No existe un avión con ese id. Cópialo de la página de Aviones.');
+      this.announcement.error('El avión ya no existe. Recarga la página.');
     } else if (error.status === 400 || error.status === 422) {
       // 400: a missing field or an unknown airport. 422: a rule (aircraft of another airline,
       // overlapping leg, arrival before departure...). The backend explains which one.

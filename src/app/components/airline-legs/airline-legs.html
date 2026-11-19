@@ -60,9 +60,18 @@
       </div>
 
       <div class="col-md-6">
-        <label class="form-label">Id del avión</label>
-        <input type="text" formControlName="aircraftId" class="form-control"
-               placeholder="Pega el id copiado en Aviones">
+        <label class="form-label">Avión</label>
+        <select formControlName="aircraftId" class="form-select">
+          <option value="" disabled>{{ aircrafts() === null ? 'Cargando aviones...' : 'Elige el avión' }}</option>
+          @for (aircraft of aircrafts() ?? []; track aircraft.id) {
+            <option [value]="aircraft.id">{{ aircraftLabel(aircraft) }}</option>
+          }
+        </select>
+        @if (aircrafts()?.length === 0) {
+          <div class="small text-muted mt-1">
+            Tu aerolínea no tiene aviones. <a routerLink="/airline/aircrafts">Registra uno</a>.
+          </div>
+        }
         @if (legForm.controls.aircraftId.invalid && legForm.controls.aircraftId.touched) {
           <div class="error">El avión es obligatorio.</div>
         }
