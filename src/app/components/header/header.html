@@ -25,6 +25,13 @@
             <i class="fa-solid fa-plane-departure me-1"></i>Buscar vuelos
           </a>
         </li>
+        @if (isAdmin()) {
+          <li class="nav-item">
+            <a routerLink="/admin" routerLinkActive="active" class="nav-link">
+              <i class="fa-solid fa-user-shield me-1"></i>Administración
+            </a>
+          </li>
+        }
         @if (isAirlineUser()) {
           <li class="nav-item">
             <a routerLink="/airline" routerLinkActive="active" class="nav-link">
