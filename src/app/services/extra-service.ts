@@ -1,6 +1,6 @@
 import { Injectable, inject } from "@angular/core";
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { ExtraService, Page } from "../flights/extra-service";
+import { CreateExtraServiceRequest, ExtraService, Page } from "../flights/extra-service";
 
 @Injectable({providedIn: "root"})
 export class ExtraServiceService {
@@ -20,5 +20,15 @@ export class ExtraServiceService {
         }
 
         return this.http.get<Page<ExtraService>>(this.url, { params });
+    }
+
+    // POST /api/extra_services: the airline comes from the token
+    create(request: CreateExtraServiceRequest) {
+        return this.http.post<ExtraService>(this.url, request);
+    }
+
+    // DELETE /api/extra_services/{id}: soft delete, old bookings keep the service. Answers 204 (no body).
+    delete(extraServiceId: string) {
+        return this.http.delete<void>(`${this.url}/${extraServiceId}`);
     }
 }
