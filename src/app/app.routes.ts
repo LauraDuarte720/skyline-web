@@ -12,7 +12,7 @@ export const routes: Routes = [
     { path: '', component: Home },
     { path: 'login', component: Login, canActivate: [guestGuard] },
     {path: 'catalogue', component: Catalogue},
-    {path: 'seat-selector', component: SeatSelector},
+    {path: 'seat-selector', component: SeatSelector, canDeactivate: [leaveBookingGuard]},
     {path: 'book', component: Book},
     {path: 'passengers', component: Passengers, canDeactivate: [leaveBookingGuard]},
     {path: 'luggage', component: Luggage, canDeactivate: [leaveBookingGuard]},
