@@ -15,3 +15,12 @@ export interface Page<T> {
     number: number;        // number of this page, starting at 0
     size: number;          // elements per page
 }
+
+// POST /api/extra_services (backend: CreateExtraServicerRequest).
+// The airline is not sent: the backend takes it from the token.
+export interface CreateExtraServiceRequest {
+    nameService: string;
+    description: string;
+    nationalPrice: number;       // 0 or more
+    internationalPrice: number;  // 0 or more
+}
