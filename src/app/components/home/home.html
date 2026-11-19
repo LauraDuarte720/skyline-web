@@ -1,1 +1,199 @@
-<p>home works!</p>
+<!-- Hero -->
+<section class="hero text-white">
+  <div class="container py-5">
+    <div class="row align-items-center g-4">
+      <div class="col-lg-7">
+        <span class="badge rounded-pill hero-badge mb-3">
+          <i class="fa-solid fa-plane-up me-1"></i>Vuelos nacionales e internacionales
+        </span>
+        <h1 class="display-5 fw-bold mb-3">Tu próximo destino está a un vuelo de distancia</h1>
+        <p class="lead mb-4">
+          Compara aerolíneas, elige tu asiento y agrega equipaje y servicios en una sola reserva.
+        </p>
+        <div class="d-flex flex-wrap gap-2">
+          <a routerLink="/catalogue" class="btn btn-light btn-lg">
+            <i class="fa-solid fa-magnifying-glass me-2"></i>Buscar vuelos
+          </a>
+          @if (!isLoggedIn()) {
+            <a routerLink="/register" class="btn btn-outline-light btn-lg">
+              <i class="fa-solid fa-user-plus me-2"></i>Crear cuenta gratis
+            </a>
+          } @else if (isCustomer()) {
+            <a routerLink="/my-bookings" class="btn btn-outline-light btn-lg">
+              <i class="fa-solid fa-ticket me-2"></i>Mis reservas
+            </a>
+          }
+        </div>
+      </div>
+      <div class="col-lg-5 d-none d-lg-block text-center">
+        <i class="fa-solid fa-plane-departure hero-plane"></i>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Numbers -->
+<section class="stats border-bottom">
+  <div class="container py-3">
+    <div class="row text-center g-3">
+      <div class="col-4">
+        <p class="h4 fw-bold mb-0">{{ airportCount() }}</p>
+        <p class="small text-muted mb-0">aeropuertos</p>
+      </div>
+      <div class="col-4">
+        <p class="h4 fw-bold mb-0">{{ countryCount() }}</p>
+        <p class="small text-muted mb-0">países</p>
+      </div>
+      <div class="col-4">
+        <p class="h4 fw-bold mb-0">{{ airlines()?.length ?? 0 }}</p>
+        <p class="small text-muted mb-0">aerolíneas</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container">
+  <!-- Destinations -->
+  <section class="mt-5">
+    <h2 class="section-title h4 mb-1">Destinos en Colombia</h2>
+    <p class="text-muted mb-4">Playa, montaña, café y selva sin salir del país.</p>
+    <div class="row g-3">
+      @for (destination of nationalDestinations(); track destination.code) {
+        <div class="col-6 col-md-4 col-lg-2">
+          <a routerLink="/catalogue" class="destination-card" [style.background]="destination.gradient">
+            <i class="fa-solid {{ destination.icon }} destination-icon"></i>
+            <span class="badge text-bg-light destination-code">{{ destination.code }}</span>
+            <div class="destination-text">
+              <p class="fw-bold mb-0">{{ destination.airport?.city }}</p>
+              <p class="small mb-0">{{ destination.tagline }}</p>
+            </div>
+          </a>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="mt-5">
+    <h2 class="section-title h4 mb-1">Destinos internacionales</h2>
+    <p class="text-muted mb-4">Del Caribe a Europa y Asia.</p>
+    <div class="row g-3">
+      @for (destination of internationalDestinations(); track destination.code) {
+        <div class="col-6 col-md-4 col-lg-2">
+          <a routerLink="/catalogue" class="destination-card" [style.background]="destination.gradient">
+            <i class="fa-solid {{ destination.icon }} destination-icon"></i>
+            <span class="badge text-bg-light destination-code">{{ destination.code }}</span>
+            <div class="destination-text">
+              <p class="fw-bold mb-0">{{ destination.airport?.city }}</p>
+              <p class="small mb-0">{{ destination.airport?.country }}</p>
+            </div>
+          </a>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- Airlines -->
+  <section class="mt-5">
+    <h2 class="section-title h4 mb-1">Aerolíneas</h2>
+    <p class="text-muted mb-4">Lo que ofrece cada una, para que elijas la que más te conviene.</p>
+
+    @if (airlines(); as airlines) {
+      <div class="row g-3">
+        @for (item of airlines; track item.airline.id) {
+          <div class="col-md-6 col-lg-4">
+            <div class="card h-100 airline-card">
+              <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                  <span class="airline-logo me-3">{{ item.airline.name.charAt(0) }}</span>
+                  <h3 class="h5 mb-0">{{ item.airline.name }}</h3>
+                </div>
+
+                <div class="row text-center g-2 mb-3">
+                  <div class="col-6">
+                    <div class="airline-fact">
+                      <p class="small text-muted mb-0">Elegir asiento</p>
+                      <p class="fw-bold mb-0">$ {{ item.airline.priceSeats | number:'1.0-0' }}</p>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="airline-fact">
+                      <p class="small text-muted mb-0">Equipaje</p>
+                      <p class="fw-bold mb-0">
+                        Hasta {{ item.airline.maximumLuggageAmount }}
+                        {{ item.airline.maximumLuggageAmount === 1 ? 'maleta' : 'maletas' }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <p class="small text-muted mb-2">Servicios a bordo</p>
+                @for (service of item.services; track service.id) {
+                  <span class="badge rounded-pill text-bg-light border me-1 mb-1">
+                    <i class="fa-solid fa-check text-success me-1"></i>{{ service.nameService }}
+                  </span>
+                } @empty {
+                  <p class="small text-muted mb-0">Sin servicios extra por ahora.</p>
+                }
+              </div>
+            </div>
+          </div>
+        } @empty {
+          <p class="text-muted">No hay aerolíneas para mostrar.</p>
+        }
+      </div>
+    } @else {
+      <div class="text-center py-4 text-muted">
+        <i class="fa-solid fa-spinner fa-spin me-2"></i>Cargando aerolíneas...
+      </div>
+    }
+  </section>
+
+  <!-- How it works -->
+  <section class="mt-5">
+    <h2 class="section-title h4 mb-4">Reservar es así de fácil</h2>
+    <div class="row g-3 text-center">
+      <div class="col-6 col-md-3">
+        <div class="step-icon mb-2"><i class="fa-solid fa-magnifying-glass"></i></div>
+        <p class="fw-semibold mb-1">1. Busca</p>
+        <p class="small text-muted mb-0">Origen, destino, fecha y pasajeros.</p>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="step-icon mb-2"><i class="fa-solid fa-couch"></i></div>
+        <p class="fw-semibold mb-1">2. Elige tu asiento</p>
+        <p class="small text-muted mb-0">En el mapa de cada tramo.</p>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="step-icon mb-2"><i class="fa-solid fa-suitcase-rolling"></i></div>
+        <p class="fw-semibold mb-1">3. Personaliza</p>
+        <p class="small text-muted mb-0">Equipaje y servicios extra.</p>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="step-icon mb-2"><i class="fa-solid fa-credit-card"></i></div>
+        <p class="fw-semibold mb-1">4. Paga y vuela</p>
+        <p class="small text-muted mb-0">Recibes tu código de reserva.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Invite to create an account (only for guests) -->
+  @if (!isLoggedIn()) {
+    <section class="cta mt-5 text-white">
+      <div class="row align-items-center g-3">
+        <div class="col-md-8">
+          <h2 class="h4 fw-bold mb-2">Crea tu cuenta y viaja más fácil</h2>
+          <ul class="list-unstyled mb-0">
+            <li><i class="fa-solid fa-check me-2"></i>Todas tus reservas en un solo lugar.</li>
+            <li><i class="fa-solid fa-check me-2"></i>Cancela las reservas pendientes de pago cuando quieras.</li>
+            <li><i class="fa-solid fa-check me-2"></i>Registrarte toma un minuto y entras de una vez.</li>
+          </ul>
+        </div>
+        <div class="col-md-4 text-md-end">
+          <a routerLink="/register" class="btn btn-light btn-lg">
+            <i class="fa-solid fa-user-plus me-2"></i>Crear cuenta
+          </a>
+          <p class="small mt-2 mb-0">¿Ya tienes una? <a routerLink="/login" class="text-white fw-semibold">Ingresa</a></p>
+        </div>
+      </div>
+    </section>
+  }
+</div>
