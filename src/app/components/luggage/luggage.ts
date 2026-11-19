@@ -102,7 +102,7 @@ export class Luggage implements BookingStep {
   onContinue(): void {
     this.stepCompleted.set(true);   // must be before navigate, the guard checks it
     // TODO: change to the next step (extra services / payment) when that page exists
-    this.router.navigate(['/']);
+    this.router.navigate(['/extra-services']);
   }
 
   // ---------- PUT /api/bookings/{id}/luggage ----------

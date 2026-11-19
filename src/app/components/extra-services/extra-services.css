@@ -1,0 +1,20 @@
+#title-extra-services {
+    color: burlywood;
+    text-transform: uppercase;
+    letter-spacing: 0.5rem;
+}
+
+/* The + and - buttons of the counter, round and the same size */
+.counter-btn {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+}
+
+/* The number between the buttons: fixed width so the buttons do not move */
+.counter-value {
+    min-width: 2rem;
+    text-align: center;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
