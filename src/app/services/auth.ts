@@ -14,6 +14,9 @@ export class AuthService {
     // The user works for an airline (admin or seller)
     isAirlineUser = computed(() => this.hasRole('AIRLINE_ADMIN', 'AIRLINE_SELLER'));
 
+    // The administrator of the whole platform
+    isAdmin = computed(() => this.hasRole('ADMIN'));
+
     login(credentials: LoginRequest) {
     return this.http.post<tokenResponse>(`${this.url}/login`, credentials); 
     }

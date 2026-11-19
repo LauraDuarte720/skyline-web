@@ -40,13 +40,19 @@ export class Login {
         next: (response) => {
           this.authService.saveSession(response);
           this.result.set('Login successful');
-          // Airline users go to their panel, the rest to the home page
-          this.router.navigate([this.authService.isAirlineUser() ? '/airline' : '/']);
+          // Each role goes to its panel, a customer to the home page
+          this.router.navigate([this.homePage()]);
         },
         error : () => {
           this.isLoading.set(false);
           this.result.set('Login failed: ');
         }
       });
+  }
+
+  private homePage(): string {
+    if (this.authService.isAdmin()) return '/admin';
+    if (this.authService.isAirlineUser()) return '/airline';
+    return '/';
   }
 }
