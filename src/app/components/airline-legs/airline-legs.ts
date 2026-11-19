@@ -1,12 +1,13 @@
-import { Component, DestroyRef, inject, signal } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { catchError, of } from 'rxjs';
 import { AIRCRAFT_MODELS, AircraftResponse } from '../../flights/aircraft';
+import { catchError, of, switchMap } from 'rxjs';
 import { Airport } from '../../flights/airport';
+import { Page } from '../../flights/extra-service';
 import { CreateLegRequest, LegResponse } from '../../flights/leg';
 import { AircraftService } from '../../services/aircraft';
 import { AirportService } from '../../services/airport';
@@ -29,6 +30,7 @@ export class AirlineLegs {
   // Catalog of airports for the <select>s (the same list as the flights search)
   airports = toSignal(inject(AirportService).getAirports(), { initialValue: [] as Airport[] });
 
+
   // Aircraft of the airline for the <select> (GET /api/aircrafts). null while they load.
   aircrafts = toSignal<AircraftResponse[] | null>(
     inject(AircraftService).getMine().pipe(
@@ -46,9 +48,40 @@ export class AirlineLegs {
     return `${model} · ${aircraft.seats.length} sillas · …${aircraft.id.slice(-6)}`;
   }
 
+  // ================= List: same pagination pattern as the extra services page =================
+
+  readonly size = 5;
+  page = signal(0);
+  private reload = signal(0);   // +1 after creating one: asks the same page again
+
+  // reload is in the query only to make it change: then switchMap asks the backend again
+  private query = computed(() => ({ page: this.page(), reload: this.reload() }));
+
+  response = toSignal(
+    toObservable(this.query).pipe(
+      switchMap(q =>
+        this.legService.getMine(q.page, this.size).pipe(
+          catchError(() => {
+            this.announcement.error('No pudimos cargar los tramos.');
+            return of(null);
+          })
+        )
+      )
+    ),
+    { initialValue: null as Page<LegResponse> | null }
+  );
+
+  legs = computed(() => this.response()?.content ?? []);
+  totalPages = computed(() => this.response()?.totalPages ?? 0);
+  total = computed(() => this.response()?.totalElements ?? 0);
+  isFirst = computed(() => this.page() === 0);
+  isLast = computed(() => this.page() >= this.totalPages() - 1);
+
+  previous(): void { this.page.update(p => p - 1); }
+  next(): void { this.page.update(p => p + 1); }
+
+
   isSaving = signal(false);
-  // Legs created while the page is open. The backend has no endpoint to list them.
-  created = signal<LegResponse[]>([]);
 
   // Same rules as the backend (CreateLegRequest + Leg.createLeg)
   legForm = inject(FormBuilder).nonNullable.group({
@@ -84,7 +117,7 @@ export class AirlineLegs {
       .subscribe({
         next: (leg) => {
           this.isSaving.set(false);
-          this.created.update((list) => [leg, ...list]);   // the newest first
+          this.reload.update(r => r + 1);
           this.announcement.success(`Tramo ${leg.originAirport} → ${leg.destinationAirport} programado.`);
           // Keep the aircraft and the prices: the next leg is usually the same aircraft
           this.legForm.patchValue({ origin: form.destination, destination: '', departureTime: '', arrivalTime: '' });
