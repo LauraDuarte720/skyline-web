@@ -9,6 +9,8 @@ import { Luggage } from './components/luggage/luggage';
 import { leaveBookingGuard } from './guards/leave-booking-guard';
 import { Passengers } from './components/passengers/passengers';
 import { Payment } from './components/payment/payment';
+import { ExtraServices } from './components/extra-services/extra-services';
+
 export const routes: Routes = [
     { path: '', component: Home },
     { path: 'login', component: Login, canActivate: [guestGuard] },
@@ -18,5 +20,6 @@ export const routes: Routes = [
     {path: 'passengers', component: Passengers, canDeactivate: [leaveBookingGuard]},
     {path: 'luggage', component: Luggage, canDeactivate: [leaveBookingGuard]},
     {path: 'payment', component: Payment, canDeactivate: [leaveBookingGuard]},
+    {path: 'extra-services', component: ExtraServices, canDeactivate: [leaveBookingGuard]},
     { path: '**', pathMatch: 'full', redirectTo: '' },
 ];

@@ -74,6 +74,7 @@ export interface BookingResponse {
     bookingStatus: string;
     paymentDeadline: string;          // LocalDateTime arrives as an ISO string
     passengers: PassengerResponse[];
+    extraServices: BookingExtraServiceResponse[];
 }
 
 export interface SelectSeatRequest{
@@ -147,6 +148,7 @@ export interface AddLuggageRequest {
     quantity: number;      // pieces of 23 kg on every leg, greater than 0
 }
 
+
 export type PaymentStatus = 'PENDING' | 'APPROVED' | 'DECLINED' | 'ERROR';
 
 export interface PaymentResponse {
@@ -168,3 +170,17 @@ export interface BookingExtraServiceResponse {
 export interface PayBookingRequest {
     paymentToken: string;
 }
+
+// PUT /api/bookings/{id}/extra-services: one service for the whole booking
+export interface AddExtraServiceRequest {
+    extraServiceId: string;
+    quantity: number;      // greater than 0, replaces the previous quantity
+}
+
+// An extra service already in the booking (backend: BookingExtraServiceResponse)
+export interface BookingExtraServiceResponse {
+    extraServiceId: string;
+    quantity: number;
+    subtotal: number;      // quantity x unit price
+}
+
