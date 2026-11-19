@@ -1,0 +1,86 @@
+<div class="container mt-4 mb-5">
+  <h1 id="title-my-bookings" class="h3 mb-2">
+    <i class="fa-solid fa-ticket me-2"></i>Mis reservas
+  </h1>
+  <p class="text-muted mb-4">
+    Las reservas que hiciste con tu cuenta. Las pendientes de pago se pueden cancelar.
+  </p>
+
+  @if (bookings(); as bookings) {
+    @for (booking of bookings; track booking.id) {
+      <div class="card mb-3">
+        <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+          <span class="small">
+            <span class="text-muted">Código:</span>
+            <span class="booking-code">{{ booking.id }}</span>
+          </span>
+          <span class="badge text-bg-{{ status(booking).color }}">{{ status(booking).label }}</span>
+        </div>
+
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <p class="small text-muted mb-1">Viaje</p>
+              <p class="mb-0">
+                <i class="fa-solid fa-plane me-1"></i>{{ tripTypeLabel(booking) }}
+                · {{ booking.numPassengers }} {{ booking.numPassengers === 1 ? 'pasajero' : 'pasajeros' }}
+              </p>
+            </div>
+            <div class="col-md-4">
+              <p class="small text-muted mb-1">Total</p>
+              <p class="fw-semibold mb-0">$ {{ booking.price | number:'1.0-0' }}</p>
+            </div>
+            <div class="col-md-4">
+              @if (booking.bookingStatus === 'PENDING') {
+                <p class="small text-muted mb-1">Pagar antes de</p>
+                <p class="mb-0">{{ booking.paymentDeadline | date:'dd/MM/yyyy HH:mm' }}</p>
+              } @else if (approvedPayment(booking); as payment) {
+                <p class="small text-muted mb-1">Pagada el</p>
+                <p class="mb-0">{{ payment.createdAt | date:'dd/MM/yyyy HH:mm' }}</p>
+              }
+            </div>
+          </div>
+
+          @if (booking.passengers.length > 0) {
+            <hr>
+            <p class="small text-muted mb-1">Pasajeros</p>
+            @for (passenger of booking.passengers; track passenger.idDocument) {
+              <p class="mb-1">
+                <i class="fa-solid fa-user me-1"></i>
+                {{ passenger.firstName }} {{ passenger.lastName1 }}
+                @if (passenger.holder) {
+                  <span class="badge text-bg-light ms-1">Titular</span>
+                }
+              </p>
+            }
+            @if (holder(booking); as holder) {
+              <p class="small text-muted mb-0 mt-2">
+                <i class="fa-solid fa-envelope me-1"></i>{{ holder.email }}
+              </p>
+            }
+          }
+        </div>
+
+        @if (booking.bookingStatus === 'PENDING') {
+          <div class="card-footer text-end">
+            <button type="button" class="btn btn-outline-danger btn-sm"
+                    [disabled]="cancellingId() !== null" (click)="cancel(booking)">
+              @if (cancellingId() === booking.id) {
+                <i class="fa-solid fa-spinner fa-spin me-1"></i>Cancelando...
+              } @else {
+                <i class="fa-solid fa-xmark me-1"></i>Cancelar reserva
+              }
+            </button>
+          </div>
+        }
+      </div>
+    } @empty {
+      <p class="text-muted text-center py-4">Todavía no tienes reservas.</p>
+    }
+  } @else {
+    <div class="text-center py-5 text-muted">
+      <i class="fa-solid fa-spinner fa-spin fa-2x mb-2"></i>
+      <p>Cargando tus reservas...</p>
+    </div>
+  }
+</div>

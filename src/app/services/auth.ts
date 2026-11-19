@@ -17,6 +17,9 @@ export class AuthService {
     // The administrator of the whole platform
     isAdmin = computed(() => this.hasRole('ADMIN'));
 
+    // A customer: the only one with "Mis reservas"
+    isCustomer = computed(() => this.hasRole('CUSTOMER'));
+
     login(credentials: LoginRequest) {
     return this.http.post<tokenResponse>(`${this.url}/login`, credentials); 
     }

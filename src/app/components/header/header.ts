@@ -14,6 +14,7 @@ export class Header {
   isLoggedIn = this.authService.isAuthenticated;
   isAirlineUser = this.authService.isAirlineUser;
   isAdmin = this.authService.isAdmin;               // shows the "Administración" link
+  isCustomer = this.authService.isCustomer;         // shows the "Mis reservas" link
 
   closeSession():void {
     this.authService.logout();

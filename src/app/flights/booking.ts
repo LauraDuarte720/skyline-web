@@ -90,7 +90,18 @@ export interface BookingResponse {
     paymentDeadline: string;          // LocalDateTime arrives as an ISO string
     passengers: PassengerResponse[];
     extraServices: BookingExtraServiceResponse[];
+    payments: PaymentResponse[];      // every payment attempt, the approved one included
 }
+
+export type BookingStatus = 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'EXPIRED';
+
+// How each status is shown: label for the user and the Bootstrap color of its badge
+export const BOOKING_STATUSES: Record<BookingStatus, { label: string; color: string }> = {
+    PENDING: { label: 'Pendiente de pago', color: 'warning' },
+    CONFIRMED: { label: 'Confirmada', color: 'success' },
+    CANCELLED: { label: 'Cancelada', color: 'secondary' },
+    EXPIRED: { label: 'Vencida', color: 'danger' },
+};
 
 export interface SelectSeatRequest{
     legId: string;
