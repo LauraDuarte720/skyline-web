@@ -10,6 +10,7 @@ import { leaveBookingGuard } from './guards/leave-booking-guard';
 import { Passengers } from './components/passengers/passengers';
 import { Payment } from './components/payment/payment';
 import { ExtraServices } from './components/extra-services/extra-services';
+import { Confirmation } from './components/confirmation/confirmation';
 
 export const routes: Routes = [
     { path: '', component: Home },
@@ -21,5 +22,6 @@ export const routes: Routes = [
     {path: 'luggage', component: Luggage, canDeactivate: [leaveBookingGuard]},
     {path: 'payment', component: Payment, canDeactivate: [leaveBookingGuard]},
     {path: 'extra-services', component: ExtraServices, canDeactivate: [leaveBookingGuard]},
+    {path: 'confirmation', component: Confirmation},   // no guard: the booking is already paid
     { path: '**', pathMatch: 'full', redirectTo: '' },
 ];
