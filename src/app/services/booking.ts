@@ -1,14 +1,15 @@
 import { Injectable, inject } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { SelectOutboundFlightRequest, SelectReturnFlightRequest, BookingResponse, SelectSeatRequest, LegSeatMapResponse, AddPassengersRequest, BookingDetail, AddLuggageRequest, PayBookingRequest,AddExtraServiceRequest } from "../flights/booking";
+import { environment } from "../../environments/environment";
 
 
 
 @Injectable({providedIn: "root"})
 export class BookingService {
     private http = inject(HttpClient);
-    private url = "http://localhost:8080/api/bookings";
-    private urlSeats = "http://localhost:8080/api/legs";
+    private url = `${environment.apiUrl}/bookings`;
+    private urlSeats = `${environment.apiUrl}/legs`;
 
     create(request: SelectOutboundFlightRequest) {
         return this.http.post<BookingResponse>(this.url, request);

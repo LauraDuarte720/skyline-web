@@ -3,11 +3,12 @@ import { HttpClient } from "@angular/common/http";
 import { Airline, CreateAirlineRequest, TopAirline } from "../flights/airline";
 import { RegisterUserRequest, UserResponse } from "../flights/auth";
 import { ExtraService } from "../flights/extra-service";
+import { environment } from "../../environments/environment";
 
 @Injectable({providedIn: "root"})
 export class AirlineService {
     private http = inject(HttpClient);
-    private url = "http://localhost:8080/api/airlines";
+    private url = `${environment.apiUrl}/airlines`;
 
     getAirlines() {
         return this.http.get<Airline[]>(this.url);
