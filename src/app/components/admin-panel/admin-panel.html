@@ -1,0 +1,61 @@
+<div class="container mt-4">
+  <h1 id="title-admin" class="h3 mb-4">
+    <i class="fa-solid fa-user-shield me-2"></i>Administración
+  </h1>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-6">
+      <a routerLink="/admin/airlines" class="card h-100 text-decoration-none panel-card">
+        <div class="card-body">
+          <i class="fa-solid fa-building fa-2x mb-2"></i>
+          <h2 class="h6">Aerolíneas</h2>
+          <p class="small text-muted mb-0">Crear una aerolínea y ver las que existen.</p>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-6">
+      <a routerLink="/admin/airline-admins" class="card h-100 text-decoration-none panel-card">
+        <div class="card-body">
+          <i class="fa-solid fa-user-gear fa-2x mb-2"></i>
+          <h2 class="h6">Administradores de aerolínea</h2>
+          <p class="small text-muted mb-0">Registrar el administrador de una aerolínea.</p>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Ranking -->
+  <div class="card">
+    <div class="card-header fw-semibold">
+      <i class="fa-solid fa-ranking-star me-2"></i>Aerolíneas con más aviones (top {{ limit }})
+    </div>
+    <div class="card-body">
+      @if (topAirlines(); as top) {
+        @if (top.length > 0) {
+          <table class="table table-sm align-middle mb-0">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Aerolínea</th>
+                <th class="text-end">Aviones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (airline of top; track airline.airlineId; let i = $index) {
+                <tr>
+                  <td>{{ i + 1 }}</td>
+                  <td>{{ airline.name }}</td>
+                  <td class="text-end">{{ airline.aircraftCount }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        } @else {
+          <p class="text-muted mb-0">Ninguna aerolínea tiene aviones todavía.</p>
+        }
+      } @else {
+        <p class="text-muted mb-0"><i class="fa-solid fa-spinner fa-spin me-1"></i>Cargando...</p>
+      }
+    </div>
+  </div>
+</div>

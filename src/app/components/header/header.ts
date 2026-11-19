@@ -13,6 +13,7 @@ export class Header {
 
   isLoggedIn = this.authService.isAuthenticated;
   isAirlineUser = this.authService.isAirlineUser;
+  isAdmin = this.authService.isAdmin;               // shows the "Administración" link
 
   closeSession():void {
     this.authService.logout();
