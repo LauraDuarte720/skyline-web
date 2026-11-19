@@ -3,7 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
-import { AddPassengersRequest, DocumentType, Gender, PHONE_PREFIXES, PhonePrefix } from '../../flights/booking';
+import { AddPassengersRequest, DOCUMENT_TYPES, DocumentType, GENDERS, Gender, PHONE_PREFIXES, PhonePrefix } from '../../flights/booking';
 import { BookingFlowService } from '../../services/booking-flow';
 import { NotificationsService } from '../../services/notifications';
 import { BookingService } from '../../services/booking';
@@ -26,19 +26,9 @@ export class Passengers {
   isLoading = signal(false);
   stepCompleted = signal(false);   // true after the PUT succeeds: the leave guard lets the user go = signal(false);
 
-  // Options for the <select>s: value = what the backend expects, label = what the user sees
-  documentTypes: { value: DocumentType; label: string }[] = [
-    { value: 'CITIZENSHIP_ID', label: 'Cédula de ciudadanía' },
-    { value: 'FOREIGNER_ID', label: 'Cédula de extranjería' },
-    { value: 'PASSPORT', label: 'Pasaporte' },
-    { value: 'IDENTITY_CARD', label: 'Tarjeta de identidad' },
-    { value: 'CIVIL_REGISTRATION', label: 'Registro civil' },
-  ];
-  genders: { value: Gender; label: string }[] = [
-    { value: 'FEMALE', label: 'Femenino' },
-    { value: 'MALE', label: 'Masculino' },
-    { value: 'OTHER', label: 'Otro' },
-  ];
+  // Options for the <select>s (shared with the sellers page)
+  documentTypes = DOCUMENT_TYPES;
+  genders = GENDERS;
   phonePrefixes = PHONE_PREFIXES;
 
   // Today as "YYYY-MM-DD" in local time: the birth date cannot be after it
