@@ -1,11 +1,12 @@
 import { Injectable, inject } from "@angular/core";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { CreateExtraServiceRequest, ExtraService, Page } from "../flights/extra-service";
+import { environment } from "../../environments/environment";
 
 @Injectable({providedIn: "root"})
 export class ExtraServiceService {
     private http = inject(HttpClient);
-    private url = "http://localhost:8080/api/extra_services";
+    private url = `${environment.apiUrl}/extra_services`;
 
     // GET /api/extra_services?page=0&size=5&search=...&airlineId=...
     search(page = 0, size = 5, search = '', airlineId = '') {

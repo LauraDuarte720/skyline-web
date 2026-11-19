@@ -2,11 +2,12 @@ import { Injectable, inject } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable, map, shareReplay } from "rxjs";
 import { Airport, AirportCode } from "../flights/airport";
+import { environment } from "../../environments/environment";
 
 @Injectable({providedIn: "root"})
 export class AirportService {
     private http = inject(HttpClient);
-    private url = "http://localhost:8080/api/airports";
+    private url = `${environment.apiUrl}/airports`;
 
     // The catalog does not change while the app runs: it is requested once and every
     // subscriber gets the same answer (shareReplay), without new HTTP calls.
