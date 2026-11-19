@@ -96,25 +96,39 @@
     </div>
   </form>
 
-  <!-- ===== Created on this visit ===== -->
-  @if (created().length > 0) {
-    <h2 class="h6 mb-2">Programados ahora</h2>
-    <p class="small text-muted">Esta lista se borra al salir de la página.</p>
-    @for (leg of created(); track leg.id) {
-      <div class="card mb-2">
-        <div class="card-body">
-          <p class="fw-semibold mb-1">
-            {{ leg.originAirport }} <i class="fa-solid fa-arrow-right mx-1"></i> {{ leg.destinationAirport }}
-          </p>
-          <p class="small mb-1">
-            {{ leg.departureTime | date:'dd/MM/yyyy HH:mm' }} – {{ leg.arrivalTime | date:'dd/MM/yyyy HH:mm' }}
-          </p>
-          <p class="small text-muted mb-0">
-            {{ leg.availableSeats }} sillas · Precio {{ leg.price | number:'1.0-0' }} ·
-            Maleta {{ leg.luggagePrice | number:'1.0-0' }}
-          </p>
-        </div>
+  <!-- ===== List: the legs of the airline, by departure time ===== -->
+  <h2 class="h6 mb-2">Tus tramos</h2>
+  @for (leg of legs(); track leg.id) {
+    <div class="card mb-2">
+      <div class="card-body">
+        <p class="fw-semibold mb-1">
+          {{ leg.originAirport }} <i class="fa-solid fa-arrow-right mx-1"></i> {{ leg.destinationAirport }}
+        </p>
+        <p class="small mb-1">
+          {{ leg.departureTime | date:'dd/MM/yyyy HH:mm' }} – {{ leg.arrivalTime | date:'dd/MM/yyyy HH:mm' }}
+        </p>
+        <p class="small text-muted mb-0">
+          {{ leg.availableSeats }} sillas libres · Precio {{ leg.price | number:'1.0-0' }} ·
+          Maleta {{ leg.luggagePrice | number:'1.0-0' }}
+        </p>
       </div>
-    }
+    </div>
+  } @empty {
+    <p class="text-muted text-center py-4">Tu aerolínea todavía no tiene tramos.</p>
+  }
+
+  <!-- Pagination -->
+  @if (totalPages() > 0) {
+    <div class="d-flex justify-content-center align-items-center gap-3 my-4">
+      <button type="button" class="btn btn-outline-secondary btn-sm"
+              [disabled]="isFirst()" (click)="previous()">
+        <i class="fa-solid fa-chevron-left me-1"></i>Anterior
+      </button>
+      <span class="small">Página {{ page() + 1 }} de {{ totalPages() }} ({{ total() }} tramos)</span>
+      <button type="button" class="btn btn-outline-secondary btn-sm"
+              [disabled]="isLast()" (click)="next()">
+        Siguiente<i class="fa-solid fa-chevron-right ms-1"></i>
+      </button>
+    </div>
   }
 </div>
