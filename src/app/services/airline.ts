@@ -47,4 +47,9 @@ export class AirlineService {
     registerAirlineAdmin(airlineId: string, request: RegisterUserRequest) {
         return this.http.post<UserResponse>(`${this.url}/${airlineId}/admins`, request);
     }
+
+    // GET /api/airlines/{id}/admins: only the ADMIN; the admins of one airline
+    getAirlineAdmins(airlineId: string) {
+        return this.http.get<UserResponse[]>(`${this.url}/${airlineId}/admins`);
+    }
 }

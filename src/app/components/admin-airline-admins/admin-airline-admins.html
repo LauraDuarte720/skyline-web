@@ -30,6 +30,16 @@
         @if (adminForm.controls.airlineId.invalid && adminForm.controls.airlineId.touched) {
           <div class="error">Elige la aerolínea.</div>
         }
+
+        <!-- Admins of the chosen airline -->
+        @if (admins(); as list) {
+          <p class="small fw-semibold mt-3 mb-1">Administradores actuales ({{ list.length }})</p>
+          @for (admin of list; track admin.id) {
+            <div class="small"><i class="fa-solid fa-user me-2 text-muted"></i>{{ admin.email }}</div>
+          } @empty {
+            <div class="small text-muted">Esta aerolínea todavía no tiene administradores.</div>
+          }
+        }
       </div>
     </div>
 
