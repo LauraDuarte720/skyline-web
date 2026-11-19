@@ -126,9 +126,9 @@ export class ExtraServices implements BookingStep {
     return this.savingServiceId() === null;
   }
 
-  // The backend cannot remove a service (quantity must be > 0): the minimum is 1
+  // Going down to 0 removes the service from the booking (the backend subtracts its price)
   canRemove(service: ExtraService): boolean {
-    return this.savingServiceId() === null && this.quantityOf(service) > 1;
+    return this.savingServiceId() === null && this.quantityOf(service) > 0;
   }
 
   add(service: ExtraService): void {
