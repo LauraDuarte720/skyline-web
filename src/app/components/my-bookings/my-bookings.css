@@ -1,0 +1,11 @@
+#title-my-bookings {
+    color: burlywood;
+    text-transform: uppercase;
+    letter-spacing: 0.5rem;
+}
+
+/* Ids are long: monospace and they can break on small screens */
+.booking-code {
+    font-family: monospace;
+    word-break: break-all;
+}
