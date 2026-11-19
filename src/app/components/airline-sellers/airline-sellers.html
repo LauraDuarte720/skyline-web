@@ -114,4 +114,16 @@
       </button>
     </div>
   </form>
+
+  <!-- ===== List: the sellers of the airline ===== -->
+  <h2 class="h6 mb-2">Tus vendedores ({{ sellers().length }})</h2>
+  @for (seller of sellers(); track seller.id) {
+    <div class="card mb-2">
+      <div class="card-body py-2">
+        <i class="fa-solid fa-user me-2 text-muted"></i>{{ seller.email }}
+      </div>
+    </div>
+  } @empty {
+    <p class="text-muted text-center py-4">Tu aerolínea todavía no tiene vendedores.</p>
+  }
 </div>

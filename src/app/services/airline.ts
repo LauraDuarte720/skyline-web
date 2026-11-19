@@ -23,6 +23,11 @@ export class AirlineService {
         return this.http.post<UserResponse>(`${this.url}/sellers`, request);
     }
 
+    // GET /api/airlines/sellers: only an AIRLINE_ADMIN; the sellers of the airline in the token
+    getSellers() {
+        return this.http.get<UserResponse[]>(`${this.url}/sellers`);
+    }
+
     // POST /api/airlines: only the ADMIN
     create(request: CreateAirlineRequest) {
         return this.http.post<Airline>(this.url, request);

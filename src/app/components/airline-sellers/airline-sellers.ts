@@ -1,7 +1,8 @@
 import { Component, DestroyRef, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { catchError, of, switchMap } from 'rxjs';
 import { DOCUMENT_TYPES, DocumentType, GENDERS, Gender } from '../../flights/booking';
 import { RegisterUserRequest, UserResponse } from '../../flights/auth';
 import { AirlineService } from '../../services/airline';
@@ -25,6 +26,26 @@ export class AirlineSellers {
 
   // Today as "YYYY-MM-DD" in local time: the birth date must be before it
   today = new Date().toLocaleDateString('en-CA');
+
+  // ================= List: the sellers of the airline (GET /api/airlines/sellers) =================
+
+  private reload = signal(0);   // +1 after creating one: asks the list again
+
+  sellers = toSignal(
+    toObservable(this.reload).pipe(
+      switchMap(() =>
+        this.airlineService.getSellers().pipe(
+          catchError(() => {
+            this.announcement.error('No pudimos cargar los vendedores.');
+            return of([] as UserResponse[]);
+          })
+        )
+      )
+    ),
+    { initialValue: [] as UserResponse[] }
+  );
+
+  // ================= Create =================
 
   isSaving = signal(false);
   created = signal<UserResponse | null>(null);   // last seller created, to show it on the page
@@ -73,6 +94,7 @@ export class AirlineSellers {
           this.created.set(user);
           this.announcement.success(`Vendedor ${user.email} registrado.`);
           this.sellerForm.reset();
+          this.reload.update(r => r + 1);
         },
         error: (error) => {
           this.isSaving.set(false);
