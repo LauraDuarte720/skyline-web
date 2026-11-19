@@ -26,6 +26,11 @@ export class BookingService {
         return this.http.get<LegSeatMapResponse>(`${this.urlSeats}/${legId}/seats`);
     }
 
+    // GET /api/bookings/mine: the bookings of the logged-in customer (only CUSTOMER)
+    getMine() {
+        return this.http.get<BookingResponse[]>(`${this.url}/mine`);
+    }
+
     cancel(bookingId: string) {
         return this.http.put<BookingResponse>(`${this.url}/${bookingId}/cancel`, {});
     }
