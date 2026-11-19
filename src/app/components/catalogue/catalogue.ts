@@ -1,6 +1,7 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { differentAirports } from '../../validators/form-validators';
 import { Router } from '@angular/router';
 import { catchError, forkJoin, of, switchMap } from 'rxjs';
 import { Flight, TripSearch } from '../../flights/catalogue';
@@ -16,13 +17,6 @@ import { FlightCard } from '../flight-card/flight-card';
 interface SearchResult {
   outbound: Flight[];
   returning: Flight[];
-}
-
-// Origin and destination can't be the same airport
-function differentAirports(form: AbstractControl): ValidationErrors | null {
-  const origin = form.get('origin')?.value;
-  const destination = form.get('destination')?.value;
-  return origin && origin === destination ? { sameAirport: true } : null;
 }
 
 @Component({

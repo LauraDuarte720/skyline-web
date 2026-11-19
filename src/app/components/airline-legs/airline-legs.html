@@ -1,0 +1,120 @@
+<div class="container mt-4">
+  <h1 id="title-airline-legs" class="h3 mb-2">
+    <i class="fa-solid fa-route me-2"></i>Tramos
+  </h1>
+  <p class="text-muted mb-4">
+    Un tramo es un vuelo directo entre dos aeropuertos con uno de tus aviones.
+    Entre dos tramos del mismo avión deben pasar al menos 5 minutos.
+  </p>
+
+  <!-- ===== Create ===== -->
+  <form [formGroup]="legForm" (ngSubmit)="onSubmit()" class="card mb-4">
+    <div class="card-body row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Origen</label>
+        <select formControlName="origin" class="form-select">
+          <option value="" disabled>Elige el origen</option>
+          @for (airport of airports(); track airport.code) {
+            <option [value]="airport.code">{{ airport.city }} ({{ airport.code }})</option>
+          }
+        </select>
+        @if (legForm.controls.origin.invalid && legForm.controls.origin.touched) {
+          <div class="error">Elige el origen.</div>
+        }
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Destino</label>
+        <select formControlName="destination" class="form-select">
+          <option value="" disabled>Elige el destino</option>
+          @for (airport of airports(); track airport.code) {
+            <option [value]="airport.code">{{ airport.city }} ({{ airport.code }})</option>
+          }
+        </select>
+        @if (legForm.controls.destination.invalid && legForm.controls.destination.touched) {
+          <div class="error">Elige el destino.</div>
+        }
+        @if (legForm.hasError('sameAirport')) {
+          <div class="error">El destino debe ser distinto del origen.</div>
+        }
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Salida</label>
+        <input type="datetime-local" formControlName="departureTime" class="form-control">
+        @if (legForm.controls.departureTime.invalid && legForm.controls.departureTime.touched) {
+          <div class="error">La fecha y hora de salida es obligatoria.</div>
+        }
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Llegada</label>
+        <input type="datetime-local" formControlName="arrivalTime" class="form-control"
+               [min]="legForm.controls.departureTime.value">
+        @if (legForm.controls.arrivalTime.invalid && legForm.controls.arrivalTime.touched) {
+          <div class="error">La fecha y hora de llegada es obligatoria.</div>
+        }
+        @if (legForm.hasError('arrivalBeforeDeparture')) {
+          <div class="error">La llegada debe ser después de la salida.</div>
+        }
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Id del avión</label>
+        <input type="text" formControlName="aircraftId" class="form-control"
+               placeholder="Pega el id copiado en Aviones">
+        @if (legForm.controls.aircraftId.invalid && legForm.controls.aircraftId.touched) {
+          <div class="error">El avión es obligatorio.</div>
+        }
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">Precio por pasajero</label>
+        <input type="number" min="1" formControlName="price" class="form-control">
+        @if (legForm.controls.price.invalid && legForm.controls.price.touched) {
+          <div class="error">Debe ser mayor que 0.</div>
+        }
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">Precio por maleta</label>
+        <input type="number" min="0" formControlName="luggagePrice" class="form-control">
+        @if (legForm.controls.luggagePrice.invalid && legForm.controls.luggagePrice.touched) {
+          <div class="error">Debe ser 0 o más.</div>
+        }
+      </div>
+
+      <div class="col-12 text-end">
+        <button type="submit" class="btn btn-primary" [disabled]="isSaving()">
+          @if (isSaving()) {
+            <i class="fa-solid fa-spinner fa-spin me-1"></i>Programando...
+          } @else {
+            <i class="fa-solid fa-plus me-1"></i>Programar tramo
+          }
+        </button>
+      </div>
+    </div>
+  </form>
+
+  <!-- ===== Created on this visit ===== -->
+  @if (created().length > 0) {
+    <h2 class="h6 mb-2">Programados ahora</h2>
+    <p class="small text-muted">Esta lista se borra al salir de la página.</p>
+    @for (leg of created(); track leg.id) {
+      <div class="card mb-2">
+        <div class="card-body">
+          <p class="fw-semibold mb-1">
+            {{ leg.originAirport }} <i class="fa-solid fa-arrow-right mx-1"></i> {{ leg.destinationAirport }}
+          </p>
+          <p class="small mb-1">
+            {{ leg.departureTime | date:'dd/MM/yyyy HH:mm' }} – {{ leg.arrivalTime | date:'dd/MM/yyyy HH:mm' }}
+          </p>
+          <p class="small text-muted mb-0">
+            {{ leg.availableSeats }} sillas · Precio {{ leg.price | number:'1.0-0' }} ·
+            Maleta {{ leg.luggagePrice | number:'1.0-0' }}
+          </p>
+        </div>
+      </div>
+    }
+  }
+</div>
