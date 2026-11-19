@@ -1,6 +1,6 @@
 import { Injectable, inject } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { SelectOutboundFlightRequest, SelectReturnFlightRequest, BookingResponse, SelectSeatRequest, LegSeatMapResponse, AddPassengersRequest, BookingDetail, AddLuggageRequest } from "../flights/booking";
+import { SelectOutboundFlightRequest, SelectReturnFlightRequest, BookingResponse, SelectSeatRequest, LegSeatMapResponse, AddPassengersRequest, BookingDetail, AddLuggageRequest, AddExtraServiceRequest } from "../flights/booking";
 
 
 @Injectable({providedIn: "root"})
@@ -40,5 +40,9 @@ export class BookingService {
 
         addLuggage(bookingId: string, request: AddLuggageRequest) {
         return this.http.put<BookingResponse>(`${this.url}/${bookingId}/luggage`, request);
+    }
+
+        addExtraService(bookingId: string, request: AddExtraServiceRequest) {
+        return this.http.put<BookingResponse>(`${this.url}/${bookingId}/extra-services`, request);
     }
 }
