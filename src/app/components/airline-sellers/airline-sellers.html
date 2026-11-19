@@ -1,0 +1,117 @@
+<div class="container mt-4">
+  <h1 id="title-airline-sellers" class="h3 mb-2">
+    <i class="fa-solid fa-user-tie me-2"></i>Vendedores
+  </h1>
+  <p class="text-muted mb-4">
+    El vendedor queda en tu aerolínea y entra con el email y la contraseña que pongas aquí.
+  </p>
+
+  @if (created(); as user) {
+    <div class="alert alert-success">
+      <i class="fa-solid fa-circle-check me-2"></i>
+      Se registró <strong>{{ user.email }}</strong> como vendedor. Ya puede iniciar sesión.
+    </div>
+  }
+
+  <form [formGroup]="sellerForm" (ngSubmit)="onSubmit()">
+    <!-- Account -->
+    <div class="card mb-3">
+      <div class="card-header fw-semibold">
+        <i class="fa-solid fa-key me-2"></i>Cuenta
+      </div>
+      <div class="card-body row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Email</label>
+          <input type="email" formControlName="email" class="form-control" placeholder="vendedor@aerolinea.com">
+          @if (sellerForm.controls.email.invalid && sellerForm.controls.email.touched) {
+            <div class="error">Escribe un email válido.</div>
+          }
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Contraseña</label>
+          <input type="password" formControlName="password" class="form-control" autocomplete="new-password">
+          @if (sellerForm.controls.password.invalid && sellerForm.controls.password.touched) {
+            <div class="error">Mínimo 8 caracteres, con una mayúscula y un número.</div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Personal data -->
+    <div class="card mb-3">
+      <div class="card-header fw-semibold">
+        <i class="fa-solid fa-id-card me-2"></i>Datos personales
+      </div>
+      <div class="card-body row g-3">
+        <div class="col-md-4">
+          <label class="form-label">Tipo de documento</label>
+          <select formControlName="documentType" class="form-select">
+            @for (type of documentTypes; track type.value) {
+              <option [value]="type.value">{{ type.label }}</option>
+            }
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Número de documento</label>
+          <input type="text" formControlName="idDocument" class="form-control">
+          @if (sellerForm.controls.idDocument.invalid && sellerForm.controls.idDocument.touched) {
+            <div class="error">El documento es obligatorio.</div>
+          }
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Género</label>
+          <select formControlName="gender" class="form-select">
+            <option value="" disabled>Selecciona</option>
+            @for (gender of genders; track gender.value) {
+              <option [value]="gender.value">{{ gender.label }}</option>
+            }
+          </select>
+          @if (sellerForm.controls.gender.invalid && sellerForm.controls.gender.touched) {
+            <div class="error">Selecciona un género.</div>
+          }
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">Primer nombre</label>
+          <input type="text" formControlName="firstName" class="form-control">
+          @if (sellerForm.controls.firstName.invalid && sellerForm.controls.firstName.touched) {
+            <div class="error">El primer nombre es obligatorio.</div>
+          }
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Segundo nombre <span class="text-muted small">(opcional)</span></label>
+          <input type="text" formControlName="secondName" class="form-control">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Primer apellido</label>
+          <input type="text" formControlName="lastName1" class="form-control">
+          @if (sellerForm.controls.lastName1.invalid && sellerForm.controls.lastName1.touched) {
+            <div class="error">El primer apellido es obligatorio.</div>
+          }
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Segundo apellido <span class="text-muted small">(opcional)</span></label>
+          <input type="text" formControlName="lastName2" class="form-control">
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Fecha de nacimiento</label>
+          <input type="date" formControlName="birthDate" class="form-control" [max]="today">
+          @if (sellerForm.controls.birthDate.invalid && sellerForm.controls.birthDate.touched) {
+            <div class="error">La fecha de nacimiento es obligatoria.</div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="text-end mb-5">
+      <button type="submit" class="btn btn-primary" [disabled]="isSaving()">
+        @if (isSaving()) {
+          <i class="fa-solid fa-spinner fa-spin me-1"></i>Registrando...
+        } @else {
+          <i class="fa-solid fa-user-plus me-1"></i>Registrar vendedor
+        }
+      </button>
+    </div>
+  </form>
+</div>
