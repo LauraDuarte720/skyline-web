@@ -1,0 +1,16 @@
+#title-airline-aircrafts {
+    color: burlywood;
+    text-transform: uppercase;
+    letter-spacing: 0.5rem;
+}
+
+.model-card {
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* The radio is hidden (btn-check): when it is checked, mark its card */
+.btn-check:checked + .model-card {
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}

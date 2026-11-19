@@ -1,0 +1,64 @@
+<div class="container mt-4">
+  <h1 id="title-airline-aircrafts" class="h3 mb-2">
+    <i class="fa-solid fa-plane me-2"></i>Aviones
+  </h1>
+  <p class="text-muted mb-4">
+    Escoge el modelo: las sillas se crean solas según el modelo.
+  </p>
+
+  <!-- ===== Create ===== -->
+  <form [formGroup]="aircraftForm" (ngSubmit)="onSubmit()" class="mb-4">
+    <div class="row g-3">
+      @for (model of models; track model.value) {
+        <div class="col-sm-6 col-lg-4">
+          <!-- The card is the label of the radio: clicking anywhere on it selects the model -->
+          <input type="radio" class="btn-check" formControlName="aircraftModel"
+                 [id]="model.value" [value]="model.value">
+          <label class="card h-100 model-card" [for]="model.value">
+            <div class="card-body">
+              <p class="fw-semibold mb-1">{{ model.label }}</p>
+              <p class="small text-muted mb-0">
+                {{ model.maxSeats }} sillas · columnas {{ model.columns }}
+              </p>
+            </div>
+          </label>
+        </div>
+      }
+    </div>
+    @if (aircraftForm.controls.aircraftModel.invalid && aircraftForm.controls.aircraftModel.touched) {
+      <div class="error mt-2">Escoge un modelo.</div>
+    }
+
+    <div class="text-end mt-3">
+      <button type="submit" class="btn btn-primary" [disabled]="isSaving()">
+        @if (isSaving()) {
+          <i class="fa-solid fa-spinner fa-spin me-1"></i>Registrando...
+        } @else {
+          <i class="fa-solid fa-plus me-1"></i>Registrar avión
+        }
+      </button>
+    </div>
+  </form>
+
+  <!-- ===== Created on this visit ===== -->
+  @if (created().length > 0) {
+    <h2 class="h6 mb-2">Registrados ahora</h2>
+    <p class="small text-muted">
+      Copia el id del avión para programar sus tramos. Esta lista se borra al salir de la página.
+    </p>
+    @for (aircraft of created(); track aircraft.id) {
+      <div class="card mb-2">
+        <div class="card-body d-flex flex-wrap justify-content-between align-items-center gap-3">
+          <div>
+            <p class="fw-semibold mb-1">{{ labelOf(aircraft.aircraftModel) }}</p>
+            <p class="small text-muted mb-1">{{ aircraft.seats.length }} sillas</p>
+            <code class="small">{{ aircraft.id }}</code>
+          </div>
+          <button type="button" class="btn btn-outline-secondary btn-sm" (click)="copyId(aircraft)">
+            <i class="fa-solid fa-copy me-1"></i>Copiar id
+          </button>
+        </div>
+      </div>
+    }
+  }
+</div>
