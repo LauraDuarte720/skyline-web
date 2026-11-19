@@ -10,6 +10,7 @@ import { AirportCode } from '../../flights/airport';
 import { BookingService } from '../../services/booking';
 import { BookingFlowService } from '../../services/booking-flow';
 import { NotificationsService } from '../../services/notifications';
+import { BookingStep } from '../../guards/leave-booking-guard';
 
 // One leg of the booking, shown as a tab
 interface LegTab {
@@ -51,12 +52,13 @@ function seatColumn(seatCode: string): string {
   styleUrl: './seat-selector.css',
   templateUrl: './seat-selector.html',
 })
-export class SeatSelector {
+export class SeatSelector implements BookingStep {
 
   private bookingService = inject(BookingService);
   private bookingFlow = inject(BookingFlowService);
   private announcement = inject(NotificationsService);
   private router = inject(Router);
+  stepCompleted = signal(false);      
 
   // ---------- Legs (tabs) ----------
   legs = computed(() => {
@@ -248,6 +250,7 @@ export class SeatSelector {
     });
   }
   onContinue(): void {
+    this.stepCompleted.set(true);   
     this.router.navigate(['/luggage']);   // next step of the booking
   }
   // Auto-advance: select the next passenger (after this one) with no seat on this leg
