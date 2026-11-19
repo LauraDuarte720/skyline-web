@@ -1,0 +1,158 @@
+<div class="container mt-4 mb-5">
+  <h1 id="title-payment" class="h3 mb-3">
+    <i class="fa-solid fa-credit-card me-2"></i>Pago
+  </h1>
+
+  @if (isLoading()) {
+    <div class="text-center py-5 text-muted">
+      <i class="fa-solid fa-spinner fa-spin fa-2x mb-2"></i>
+      <p>Cargando tu reserva...</p>
+    </div>
+  } @else {
+    @if (booking(); as booking) {
+
+      <!-- Countdown: yellow, red in the last 2 minutes -->
+      <div class="alert d-flex align-items-center gap-2"
+           [class.alert-warning]="(secondsLeft() ?? 0) > 120"
+           [class.alert-danger]="(secondsLeft() ?? 0) <= 120">
+        <i class="fa-solid fa-clock"></i>
+        Te quedan <strong class="countdown">{{ countdown() }}</strong> para pagar tu reserva.
+      </div>
+
+      <div class="row g-4">
+
+        <!-- Left: card form -->
+        <div class="col-lg-7">
+          <div class="card">
+            <div class="card-body">
+              <h2 class="h5 mb-3">Datos de la tarjeta</h2>
+
+              <form [formGroup]="cardForm" (ngSubmit)="pay()" novalidate>
+                <div class="mb-3">
+                  <label class="form-label" for="number">Número de la tarjeta</label>
+                  <input id="number" class="form-control" formControlName="number"
+                         inputmode="numeric" maxlength="19" placeholder="4242 4242 4242 4242"
+                         autocomplete="cc-number" [class.is-invalid]="invalid('number')">
+                  <div class="invalid-feedback">Escribe los 16 dígitos de la tarjeta.</div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label" for="name">Nombre en la tarjeta</label>
+                  <input id="name" class="form-control" formControlName="name"
+                         autocomplete="cc-name" [class.is-invalid]="invalid('name')">
+                  <div class="invalid-feedback">Escribe el nombre como aparece en la tarjeta.</div>
+                </div>
+
+                <div class="row">
+                  <div class="col-6 mb-3">
+                    <label class="form-label" for="expiry">Vencimiento</label>
+                    <input id="expiry" class="form-control" formControlName="expiry"
+                           maxlength="5" placeholder="MM/AA"
+                           autocomplete="cc-exp" [class.is-invalid]="invalid('expiry')">
+                    <div class="invalid-feedback">
+                      @if (cardForm.controls.expiry.hasError('expired')) {
+                        La tarjeta está vencida.
+                      } @else {
+                        Usa el formato MM/AA.
+                      }
+                    </div>
+                  </div>
+                  <div class="col-6 mb-3">
+                    <label class="form-label" for="cvv">CVV</label>
+                    <input id="cvv" class="form-control" formControlName="cvv" type="password"
+                           inputmode="numeric" maxlength="3"
+                           autocomplete="cc-csc" [class.is-invalid]="invalid('cvv')">
+                    <div class="invalid-feedback">Son 3 dígitos.</div>
+                  </div>
+                </div>
+
+                <!-- Why the last attempt failed (message from the backend) -->
+                @if (errorMessage(); as message) {
+                  <div class="alert alert-danger">
+                    <i class="fa-solid fa-circle-exclamation me-2"></i>{{ message }}
+                  </div>
+                }
+
+                <button type="submit" class="btn btn-primary w-100" [disabled]="paying() || expired()">
+                  @if (paying()) {
+                    <i class="fa-solid fa-spinner fa-spin me-2"></i>Procesando...
+                  } @else {
+                    Pagar {{ booking.price | number:'1.0-0' }}
+                  }
+                </button>
+
+                <p class="small text-muted mt-3 mb-0">
+                  Tarjetas de prueba: 4242 4242 4242 4242 (aprobada),
+                  terminada en 0002 (rechazada), terminada en 0119 (error del proveedor).
+                </p>
+              </form>
+            </div>
+          </div>
+        </div>
+
+                <!-- Right: summary -->
+        <div class="col-lg-5">
+          <div class="card summary">
+            <div class="card-body">
+              <h2 class="h5 mb-3">Resumen</h2>
+
+              <!-- Flights: outbound and, if round trip, return -->
+              @for (flight of [bookingFlow.outboundFlight(), bookingFlow.returnFlight()]; track $index) {
+                @if (flight) {
+                  <div class="mb-3">
+                    <p class="fw-semibold mb-1">
+                      <i class="fa-solid fa-plane me-1"></i>
+                      {{ $index === 0 ? 'Ida' : 'Regreso' }}:
+                      {{ flight.originAirport }} → {{ flight.destinationAirport }}
+                    </p>
+                    <p class="small text-muted mb-0">
+                      {{ flight.departureTime | date:'dd/MM/yyyy HH:mm' }} – {{ flight.arrivalTime | date:'HH:mm' }}
+                      · {{ flight.layovers.length === 0 ? 'Directo' : flight.layovers.length + ' escala(s)' }}
+                    </p>
+                  </div>
+                }
+              }
+
+              <!-- Passengers with their seats and luggage -->
+              <hr>
+              @for (passenger of booking.passengers; track passenger.idDocument) {
+                <div class="d-flex justify-content-between small mb-2">
+                  <span>
+                    <i class="fa-solid fa-user me-1"></i>{{ passenger.firstName }} {{ passenger.lastName1 }}
+                    <br><span class="text-muted">Asientos: {{ seatCodes(passenger) }}</span>
+                  </span>
+                  @if (passenger.luggage; as luggage) {
+                    <span class="text-end">
+                      {{ luggage.quantity }} maleta(s)<br>{{ luggage.subTotal | number:'1.0-0' }}
+                    </span>
+                  }
+                </div>
+              }
+
+              <!-- Extra services (only if the booking has any) -->
+              @if (booking.extraServices.length > 0) {
+                <hr>
+                @for (extra of booking.extraServices; track extra.extraServiceId) {
+                  <div class="d-flex justify-content-between small mb-1">
+                    <span>{{ extra.extraServiceId }} × {{ extra.quantity }}</span>
+                    <span>{{ extra.subtotal | number:'1.0-0' }}</span>
+                  </div>
+                }
+              }
+
+              <!-- Total: always the backend's price, never added up in the front -->
+              <hr>
+              <div class="d-flex justify-content-between fw-bold fs-5">
+                <span>Total</span>
+                <span>{{ booking.price | number:'1.0-0' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-5">
+        </div>
+
+      </div>
+    }
+  }
+</div>

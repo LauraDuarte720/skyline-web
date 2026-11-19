@@ -1,0 +1,26 @@
+/* Same style as the other titles of the booking flow (luggage, passengers) */
+#title-payment {
+    color: burlywood;
+    text-transform: uppercase;
+    letter-spacing: 0.5rem;
+}
+
+/* Every digit takes the same width: the countdown does not "jump" every second */
+.countdown {
+    font-variant-numeric: tabular-nums;
+}
+
+/* The card number and CVV look like a real card */
+#number,
+#cvv {
+    font-family: monospace;
+    letter-spacing: 0.1rem;
+}
+
+/* On wide screens the summary stays visible while the user scrolls the form */
+@media (min-width: 992px) {
+    .summary {
+        position: sticky;
+        top: 1rem;
+    }
+}
