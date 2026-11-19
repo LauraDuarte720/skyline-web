@@ -21,6 +21,7 @@ import { AdminPanel } from './components/admin-panel/admin-panel';
 import { AdminAirlines } from './components/admin-airlines/admin-airlines';
 import { AdminAirlineAdmins } from './components/admin-airline-admins/admin-airline-admins';
 import { Register } from './components/register/register';
+import { MyBookings } from './components/my-bookings/my-bookings';
 
 export const routes: Routes = [
     { path: '', component: Home },
@@ -42,5 +43,6 @@ export const routes: Routes = [
     {path: 'admin/airlines', component: AdminAirlines, canActivate: [roleGuard('ADMIN')]},
     {path: 'admin/airline-admins', component: AdminAirlineAdmins, canActivate: [roleGuard('ADMIN')]},
     { path: 'register', component: Register, canActivate: [guestGuard] },
+    {path: 'my-bookings', component: MyBookings, canActivate: [roleGuard('CUSTOMER')]},
     { path: '**', pathMatch: 'full', redirectTo: '' },
 ];
